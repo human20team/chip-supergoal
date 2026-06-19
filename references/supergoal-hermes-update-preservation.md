@@ -8,10 +8,10 @@ Use this when a SuperGoal `/goal` launch bug required patching Hermes gateway/Go
 
 A live gateway patch is not durable until both layers are true:
 
-1. The live Hermes checkout commits the code and pushes it to the user's private Hermes fork (`private/main`).
+1. The live Hermes checkout commits the code and pushes it to Chip's private Hermes fork (`private/main`).
 2. The server operations/update runbook documents the private rail so future upstream merges treat missing behavior as a private-patch regression, not harmless upstream drift.
 
-Do not tell the user “it is safe across updates” if the fix exists only as dirty files in `<hermes-agent-install>`.
+Do not tell Chip “it is safe across updates” if the fix exists only as dirty files in `/opt/hermes-agent`.
 
 ## Required preservation checklist
 
@@ -27,7 +27,7 @@ For SuperGoal launch-pipeline fixes, preserve all of these in the private fork a
 ## Commands that proved the preservation pattern
 
 ```bash
-cd <hermes-agent-install>
+cd /opt/hermes-agent
 python -m pytest tests/gateway/test_goal_reply_command.py tests/gateway/test_telegram_documents.py tests/hermes_cli/test_goals.py tests/gateway/test_goal_status_notice.py tests/gateway/test_goal_max_turns_config.py tests/gateway/test_goal_verdict_send.py tests/gateway/test_telegram_clarify_buttons.py tests/gateway/test_telegram_group_gating.py -q -o 'addopts='
 git add gateway/platforms/telegram.py gateway/run.py hermes_cli/goals.py tests/gateway/test_goal_reply_command.py tests/gateway/test_telegram_documents.py tests/gateway/test_telegram_group_gating.py tests/hermes_cli/test_goals.py
 git commit -m "fix(gateway): stabilize supergoal launch pipeline"
@@ -43,7 +43,7 @@ Server-doctor/update-runbook side:
 
 ## Final proof before retrying `/goal`
 
-After restart and before asking the user to retry, verify:
+After restart and before asking Chip to retry, verify:
 
 ```text
 gateway ActiveState=active

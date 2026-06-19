@@ -1,6 +1,6 @@
 # Architecture-decision SuperGoal pattern
 
-Use this when the user asks to “make SuperGoal” for an architecture decision/evaluation rather than a normal coding feature.
+Use this when Chip asks to “make SuperGoal” for an architecture decision/evaluation rather than a normal coding feature.
 
 ## Shape
 

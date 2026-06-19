@@ -8,6 +8,7 @@ Repeat across `/goal` continuations until `SUPERGOAL_RUN_COMPLETE` is printed. *
 
 1. Read `.supergoal/STATE.md`. Find `Current phase: N`.
    - If it says `AUDIT`, skip numbered phases and run the **Final audit** below.
+   - If it says `BLOCKED_BY_APPROVAL`, `READY_FOR_DELETE_APPROVAL`, or another explicit human/provider approval gate, stop the loop. Do not re-run checks or restate the same approval card on repeated continuations. Report the blocker once; on further identical continuation wrappers, return at most a one-line status. The GoalManager should mark this as blocked/paused rather than continuing until the turn budget is exhausted.
 2. Read `.supergoal/phases/phase-N.md`. This is your full work spec.
 3. Print `SUPERGOAL_PHASE_START` with the spec's metadata (phase number, name, task, mandatory commands, acceptance count, evidence types, dependencies).
 4. Print `SUPERGOAL_STATUS` for human readability: current phase, percent, status, current action, check summary, latest evidence, and next step. Follow `references/supergoal-status-snapshots.md`. This is not completion proof and does not replace formal markers.
@@ -18,7 +19,19 @@ Repeat across `/goal` continuations until `SUPERGOAL_RUN_COMPLETE` is printed. *
 9. Print `SUPERGOAL_PHASE_DONE`. Update `STATE.md`: mark phase N completed; if N < total, set `Current phase: N+1`; if N == total, set `Current phase: AUDIT`; bump `Last update` timestamp; append a one-line event.
 10. **Yield instead of chaining phases.** Print `SUPERGOAL_TURN_YIELD` with the next state (`phase N+1` or `AUDIT`) and a final `SUPERGOAL_STATUS` snapshot, then stop the current assistant turn. Do not start the next phase in the same turn. The `/goal` judge will see that `SUPERGOAL_RUN_COMPLETE` is still missing and will enqueue the next continuation automatically.
 11. On the next `/goal` continuation, repeat from step 1.
-12. When `Current phase: AUDIT`, run the **Final audit** below. Only after `AUDIT_COMPLETE`, print `SUPERGOAL_RUN_COMPLETE` with a 5-line summary. The `/goal` condition is satisfied at that point.
+12. When `Current phase: AUDIT`, run the **Final audit** below. Only after all required Telegram/file delivery receipts exist (`review-md-files-delivery-receipt.json` for the three planning `.md` files when configured, and final artifact receipt when configured), then print `AUDIT_COMPLETE` and `SUPERGOAL_RUN_COMPLETE` with a 5-line summary. The `/goal` condition is satisfied only after delivery receipts and final markers exist.
+
+## Dev-history hardening gates
+
+These gates come from repeated Dev-chat incidents and override vague convenience:
+
+- **Continuation over status-only:** if `STATE.md` is not `DONE` or `BLOCKED`, continue the current phase/audit from disk. Do not answer only with a status report when work can safely continue.
+- **Gateway restart/autoresume:** after restart, withheld autoresume, or repeated `/goal resume`, inspect `STATE.md`, active goal identity, and the last phase marker. Resume safely; do not create a new root unless the state identity is ambiguous or the user explicitly asks for a clean SuperGoal.
+- **Retrieval-before-ask:** before asking for keys, wallet refs, prior artifacts, package paths, docs, or approvals the user says already exist, search `.supergoal/`, repo docs, local ignored overlays, session history, relevant skills, and Telegram history when available. If missing, name what was checked.
+- **Safe-lane approval:** broad “делай всё до конца” covers safe repo/docs/tests/private-skill work through requested commit/push/verification. It does not approve money/DNS/secrets/grants/destructive production/public posting.
+- **Bounded live manifest:** money, wallets, trading, DNS, secrets, grants, destructive production, and public/mass sends require one exact bounded manifest. If absent, print `BLOCKED_BY_APPROVAL` and stop.
+- **Repo/private delivery:** if the task names `git push`, `private repo`, or a skill publication target, phase/final DONE requires remote HEAD verification and clean status, or an explicit local-only boundary.
+
 
 ## Embedded RPD v2 gates
 
@@ -70,7 +83,6 @@ Decision: complete | audit-fix-needed | handoff
 
 If decision is `audit-fix-needed`, write `.supergoal/phases/audit-rpd-fix-<round>.md`, execute it inline, and then rerun the audit round. If decision is `handoff`, print `AUDIT_HANDOFF`, update `STATE.md` to `BLOCKED`, and do not print `SUPERGOAL_RUN_COMPLETE`.
 
-
 ## Final audit (Stage 10 — runs after the last phase, before completion)
 
 Per-phase VERIFY blocks are self-reports. The audit closes that loophole by re-validating against the **original** `ROADMAP.md`, not against this run's own self-reports. The audit runs up to 3 rounds; on the 3rd round's failure, `AUDIT_HANDOFF`.
@@ -104,8 +116,9 @@ Per-phase VERIFY blocks are self-reports. The audit closes that loophole by re-v
 ### If zero gaps
 
 1. Compute `audit coverage`: `re_verified / (re_verified + trust_prior)` as a percentage. `re_verified` = criteria with `pass` from step 5 + deliverables marked `present` from step 5b. `trust_prior` = criteria marked `trust-prior-verify`.
-2. Print `AUDIT_COMPLETE` (rounds, phases re-verified, commands re-run clean, criteria pass / trust-prior counts, **audit coverage %**).
-3. Print `SUPERGOAL_RUN_COMPLETE` with the 5-line summary. If `trust_prior / (re_verified + trust_prior)` > **30%**, prepend a one-line honesty banner: `⚠ Audit coverage: <re_verified> re-verified, <trust_prior> trust-prior (<pct>%). Eyeball UI/UX before merging.` Below 30%, print the same coverage line without the warning prefix.
+2. Verify required file-delivery receipts before completion: if the SuperGoal declares `send-review-md-files.sh`, `.supergoal/out/review-md-files-delivery-receipt.json` must exist with `ok=true` and `sent=true`; if it declares final artifact delivery, `.supergoal/out/final-artifacts-delivery-receipt.json` must exist with `ok=true` and `sent=true`. Missing or false receipt = `AUDIT_GAP`.
+3. Print `AUDIT_COMPLETE` (rounds, phases re-verified, commands re-run clean, criteria pass / trust-prior counts, **audit coverage %**).
+4. Print `SUPERGOAL_RUN_COMPLETE` with the 5-line summary. If `trust_prior / (re_verified + trust_prior)` > **30%**, prepend a one-line honesty banner: `⚠ Audit coverage: <re_verified> re-verified, <trust_prior> (<pct>%). Eyeball UI/UX before merging.` Below 30%, print the same coverage line without the warning prefix.
 
 ## Failure recovery (3-strike)
 
