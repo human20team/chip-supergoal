@@ -6,7 +6,7 @@ argument-hint: <describe what must be built, fixed, shipped, or planned>
 
 # chip-supergoal
 
-`chip-supergoal` is a **planner**, not the executor. It turns a non-trivial task into a disk-backed `.supergoal/` package and one launchable `/goal` handoff. The later `/goal` session executes from the generated files, verifies every phase, runs final audit, and prints `SUPERGOAL_RUN_COMPLETE` only after `AUDIT_COMPLETE`.
+`chip-supergoal` is a **planner/compiler**, not the executor. It turns a non-trivial task into a disk-backed `.supergoal/` package and one launchable standard Hermes `/goal` handoff. The later upstream GoalManager session executes from the generated files, verifies every phase, runs final audit, and prints `SUPERGOAL_RUN_COMPLETE` only after `AUDIT_COMPLETE`.
 
 ## Principal+ contract
 
@@ -15,7 +15,7 @@ Use this root as the controller. Heavy detail lives in references and templates.
 1. **Simple core, modular depth** — root owns triggers, invariants, stage order, artifact list, and reference dispatch. Incident lessons live in references.
 2. **Plan-only boundary** — this skill may inspect, research, and write planning artifacts. It must not execute numbered implementation phases.
 3. **One launch surface** — create exactly one human-facing launch body in `LAUNCH_GOAL.md`. Do not hide alternate launch bodies in `ROADMAP.md` or `THINKING.md`.
-4. **One `/goal`, not a chain** — the executor reads `STATE.md` and continues until all phases plus audit complete.
+4. **One standard `/goal`, not a chain** — the executor reads `STATE.md` and continues until all phases plus audit complete.
 5. **No false done** — every phase needs real evidence; final completion requires re-reading the original `ROADMAP.md`, re-running aggregate checks, checking deliverables, `RPD_FINAL_REVIEW`, `AUDIT_COMPLETE`, then `SUPERGOAL_RUN_COMPLETE`.
 6. **Risky work gets Senior Gate** — auth, payments, secrets, production, migrations, gateways, cron/model routing, private data, destructive actions, public launches, and recurring bugs require evidence-tiered RPD/Senior review.
 7. **Telegram delivery is blocking when requested** — if Chip asks for files or final artifacts in Telegram, scripted send + receipt is part of done, not a promise.
@@ -129,6 +129,7 @@ Load `references/rpd-review-gates.md` for the full evidence-tier, severity, over
 Load only the matching reference:
 
 - Core planning: `references/core-planning-contract.md`
+- Upstream `/goal` compatibility: `references/upstream-goal-compatibility.md`
 - Artifact schemas: `references/artifact-schemas.md`
 - Execution loop and recovery: `references/execution-state-machine.md`
 - Research/architecture: `references/research-and-architecture-gates.md`, `references/architect-plus-lite.md`, `references/research-before-design.md`
@@ -146,7 +147,7 @@ If a new incident only adds another example of an existing invariant, update the
 
 ## Launch and delivery rules
 
-- `LAUNCH_GOAL.md` is the replyable launch file. It contains the exact `SUPERGOAL_GOAL_BODY:` line.
+- `LAUNCH_GOAL.md` is the replyable launch file. It contains the exact upstream-compatible `SUPERGOAL_GOAL_BODY:` line.
 - `ROADMAP.md`, `THINKING.md`, and `PROTOCOL.md` must not contain their own actual launch body line.
 - Planning-stage review pack is exactly three native `.md` files by default: `THINKING.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`.
 - If Telegram/native file delivery is required, the run must create/send receipts and verify `ok=true` and `sent=true` before declaring the corresponding gate closed.

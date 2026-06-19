@@ -26,6 +26,7 @@ for required in \
   references/execution-state-machine.md \
   references/INDEX.md \
   references/dev-history-hardening.md \
+  references/upstream-goal-compatibility.md \
   templates/delivery/send-review-md-files.sh \
   templates/delivery/package-final-artifacts.sh \
   templates/delivery/send-final-artifacts.sh \
@@ -284,6 +285,9 @@ pass "protocol yields between phases"
 
 python3 scripts/probe-dev-history-contracts.py
 pass "dev-history hardening contracts"
+
+python3 scripts/probe-upstream-goal-compat.py
+pass "upstream goal compatibility contracts"
 
 REPO="$TMP/repo"
 mkdir "$REPO"

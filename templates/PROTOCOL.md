@@ -17,7 +17,7 @@ Repeat across `/goal` continuations until `SUPERGOAL_RUN_COMPLETE` is printed. *
 7. **RPD phase review.** If the phase spec declares `RPD required: yes` or the phase touches a risky area, run `RPD_PHASE_REVIEW`. Fix any gap before `SUPERGOAL_PHASE_DONE`, or mark `checked-holds` with evidence.
 8. **Memory writeback check.** Anything non-obvious learned this phase? If yes, write a memory file under the detected MEM_DIR (frontmatter: `name`, `description`, `metadata.type` of `feedback`/`project`/`reference`/`user`); link it from `MEMORY.md`. Print `MEMORY_SAVED: <name>` or `MEMORY_SAVED: none`.
 9. Print `SUPERGOAL_PHASE_DONE`. Update `STATE.md`: mark phase N completed; if N < total, set `Current phase: N+1`; if N == total, set `Current phase: AUDIT`; bump `Last update` timestamp; append a one-line event.
-10. **Yield instead of chaining phases.** Print `SUPERGOAL_TURN_YIELD` with the next state (`phase N+1` or `AUDIT`) and a final `SUPERGOAL_STATUS` snapshot, then stop the current assistant turn. Do not start the next phase in the same turn. The `/goal` judge will see that `SUPERGOAL_RUN_COMPLETE` is still missing and will enqueue the next continuation automatically.
+10. **Yield instead of chaining phases.** Print `SUPERGOAL_TURN_YIELD` with the next state (`phase N+1` or `AUDIT`), a final `SUPERGOAL_STATUS` snapshot, and the exact footer `Goal complete: no` plus `Completion requires: AUDIT_COMPLETE and SUPERGOAL_RUN_COMPLETE in the same final response.` Then stop the current assistant turn. Do not start the next phase in the same turn. The standard `/goal` judge should see that the whole goal is incomplete and enqueue the next continuation automatically.
 11. On the next `/goal` continuation, repeat from step 1.
 12. When `Current phase: AUDIT`, run the **Final audit** below. Only after all required Telegram/file delivery receipts exist (`review-md-files-delivery-receipt.json` for the three planning `.md` files when configured, and final artifact receipt when configured), then print `AUDIT_COMPLETE` and `SUPERGOAL_RUN_COMPLETE` with a 5-line summary. The `/goal` condition is satisfied only after delivery receipts and final markers exist.
 
@@ -32,6 +32,30 @@ These gates come from repeated Dev-chat incidents and override vague convenience
 - **Bounded live manifest:** money, wallets, trading, DNS, secrets, grants, destructive production, and public/mass sends require one exact bounded manifest. If absent, print `BLOCKED_BY_APPROVAL` and stop.
 - **Repo/private delivery:** if the task names `git push`, `private repo`, or a skill publication target, phase/final DONE requires remote HEAD verification and clean status, or an explicit local-only boundary.
 
+
+
+## Standard Hermes `/goal` compatibility
+
+This protocol is designed for the upstream Hermes GoalManager. Do not start a custom runner and do not spawn nested `/goal` commands. The standard `/goal` loop only sees the standing goal and the latest response snippet; it does not understand SuperGoal phases, receipts, approvals, or audit state unless the response states them clearly.
+
+Non-final turns must end with this exact judge-proof footer:
+
+```text
+SUPERGOAL_TURN_YIELD
+Goal complete: no
+Next: <phase N+1|AUDIT|blocked marker>
+Completion requires: AUDIT_COMPLETE and SUPERGOAL_RUN_COMPLETE in the same final response.
+```
+
+Final completion must end with:
+
+```text
+AUDIT_COMPLETE
+SUPERGOAL_RUN_COMPLETE
+Goal complete: yes
+```
+
+Do not use `Goal complete: yes` anywhere else. A phase being done is not the whole goal being done. If `AUDIT_COMPLETE` is present without `SUPERGOAL_RUN_COMPLETE`, the standard judge should continue. If `SUPERGOAL_RUN_COMPLETE` is present without `AUDIT_COMPLETE`, that is a protocol violation and must be treated as incomplete.
 
 ## Embedded RPD v2 gates
 
@@ -118,7 +142,7 @@ Per-phase VERIFY blocks are self-reports. The audit closes that loophole by re-v
 1. Compute `audit coverage`: `re_verified / (re_verified + trust_prior)` as a percentage. `re_verified` = criteria with `pass` from step 5 + deliverables marked `present` from step 5b. `trust_prior` = criteria marked `trust-prior-verify`.
 2. Verify required file-delivery receipts before completion: if the SuperGoal declares `send-review-md-files.sh`, `.supergoal/out/review-md-files-delivery-receipt.json` must exist with `ok=true` and `sent=true`; if it declares final artifact delivery, `.supergoal/out/final-artifacts-delivery-receipt.json` must exist with `ok=true` and `sent=true`. Missing or false receipt = `AUDIT_GAP`.
 3. Print `AUDIT_COMPLETE` (rounds, phases re-verified, commands re-run clean, criteria pass / trust-prior counts, **audit coverage %**).
-4. Print `SUPERGOAL_RUN_COMPLETE` with the 5-line summary. If `trust_prior / (re_verified + trust_prior)` > **30%**, prepend a one-line honesty banner: `⚠ Audit coverage: <re_verified> re-verified, <trust_prior> (<pct>%). Eyeball UI/UX before merging.` Below 30%, print the same coverage line without the warning prefix.
+4. Print `SUPERGOAL_RUN_COMPLETE` with the 5-line summary, then `Goal complete: yes`. If `trust_prior / (re_verified + trust_prior)` > **30%**, prepend a one-line honesty banner: `⚠ Audit coverage: <re_verified> re-verified, <trust_prior> (<pct>%). Eyeball UI/UX before merging.` Below 30%, print the same coverage line without the warning prefix.
 
 ## Failure recovery (3-strike)
 

@@ -2,6 +2,7 @@
 
 ## Canonical references
 
+- `upstream-goal-compatibility.md` — standard Hermes `/goal` compiler boundary, judge-proof turn endings, blockers, and budget rules.
 - `core-planning-contract.md` — Stage 0-7 planner workflow.
 - `artifact-schemas.md` — schemas for generated files and receipts.
 - `execution-state-machine.md` — `/goal` executor state machine and recovery precedence.
