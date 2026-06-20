@@ -27,6 +27,9 @@ for required in \
   references/INDEX.md \
   references/dev-history-hardening.md \
   references/upstream-goal-compatibility.md \
+  references/upstream-goal-reconciliation.md \
+  references/rpd-to-supergoal-handoff.md \
+  references/ignored-supergoal-package-hygiene.md \
   templates/delivery/send-review-md-files.sh \
   templates/delivery/package-final-artifacts.sh \
   templates/delivery/send-final-artifacts.sh \
@@ -116,6 +119,38 @@ required = [
 missing = [x for x in required if x not in bundle]
 assert not missing, missing
 print('PASS: marker contract')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+protocol = Path('templates/PROTOCOL.md').read_text(errors='ignore')
+assert '.supergoal/scripts/repo-state.sh' in protocol
+assert '.supergoal/repo-state.sh' not in protocol
+for forbidden in ('references/', 'SKILL.md'):
+    assert forbidden not in protocol, f'generated protocol references missing external package path: {forbidden}'
+print('PASS: generated protocol is self-contained')
+PY
+
+python3 - <<'PY'
+from pathlib import Path
+repo_state = Path('references/repo-state-comparison.md').read_text(errors='ignore')
+assert '.supergoal/scripts/repo-state.sh' in repo_state
+assert '.supergoal/repo-state.sh' not in repo_state
+assert 'invalid baseline' in repo_state and 'exit 2' in repo_state
+assert 'unchanged — existed before baseline' in repo_state and 'exit 3' in repo_state
+assert 'still reads `present`' not in repo_state
+assert 'ignored-or-non-git existence fallback' not in repo_state
+assert 'exists on disk only in non-git fallback mode' in repo_state
+preserve = Path('references/supergoal-hermes-update-preservation.md').read_text(errors='ignore')
+for required in (
+    'hermes_cli/goal_policies.py',
+    'gateway/goal_launch.py',
+    'thin compatibility shims',
+    'skip exactly one post-turn judge pass',
+    'Queued slash-command fallback is intentionally not used',
+):
+    assert required in preserve, required
+print('PASS: preservation docs match upstream-shaped rail')
 PY
 
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then

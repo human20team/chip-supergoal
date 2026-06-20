@@ -14,6 +14,9 @@
 - `production-safety.md` — deploy/infra/auth/payments/risky work.
 - `skill-maintenance.md` — Hermes skill edit/package validation.
 - `dev-history-hardening.md` — Dev-chat incident classes: goal continuation, Telegram files, approvals, retrieval-before-ask, repo delivery.
+- `upstream-goal-reconciliation.md` — current upstream-shaped Hermes `/goal` integration split and private-update preservation checks.
+- `ignored-supergoal-package-hygiene.md` — package hygiene for ignored `.supergoal/` artifacts and cleanup before git push.
+- `rpd-to-supergoal-handoff.md` — conversion contract from RPD review output into launchable SuperGoal packages.
 
 ## Historical references
 

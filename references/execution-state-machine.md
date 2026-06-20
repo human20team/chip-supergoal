@@ -26,6 +26,16 @@ This is the precedence table for the generated `/goal` executor.
 
 Do not start phase N+1 in the same official GoalManager turn.
 
+## State ledger and ignored package artifacts
+
+- Use a real timestamp for every `STATE.md` event (`date -u +%Y-%m-%dT%H:%M:%SZ` or tool-provided equivalent). Do not write placeholder times and patch them later unless unavoidable.
+- `.supergoal/` is often intentionally git-ignored. Plain `git status --short` can look clean while the package exists only as ignored files. When verifying package presence or cleanliness, also run one of:
+  - `git status --short --ignored .supergoal`
+  - `find .supergoal -maxdepth 3 -type f | sort`
+- Before creating a new package, check whether an ignored `.supergoal/` already exists. If it is stale and the user asked for a fresh SuperGoal, remove/recreate it explicitly and record that in `STATE.md`.
+- Phase evidence must distinguish tracked repo cleanliness from ignored planning artifacts. A clean tracked status does not prove the `.supergoal/` package is absent, delivered, or current.
+- During final residue cleanup, exclude runtime/vendor dirs such as `venv/`, `.venv/`, `.git/`, `.supergoal/`, and `node_modules/`. Clean `__pycache__`, `.pytest_cache`, and `*.pyc` with a bounded script that skips those dirs; do not sweep the whole repo blindly or you can hit permission-owned package caches inside the active virtualenv.
+
 ## Manual Telegram/no-stall fallback
 
 If auto-continuation is visibly not happening and the user sends a continuation command, continue from `STATE.md`. You may process more than one phase within a bounded practical budget only when that is the only way to avoid stalling. You still must emit every phase marker and update state after each phase.
@@ -57,3 +67,11 @@ If not found, ask for the smallest missing item and list the stores checked.
 ## Repo delivery completion gate
 
 When a phase deliverable includes push/private repo/publication, `SUPERGOAL_PHASE_DONE` must cite remote HEAD match or explicit local-only boundary. Final audit treats missing remote proof as an `AUDIT_GAP`.
+
+If the user adds a durable-doc/update instruction during the final phase or audit (for example: “пропиши это в server-doctor so future updates reapply the patch”), treat it as part of the current audit deliverable, not as a separate future promise:
+
+- load the governing ops/update skill or reference;
+- patch the reusable class-level runbook with the exact reapply shape and verification commands;
+- if the runbook is repository-backed and the user did not forbid it, commit and push only that doc update, then verify remote HEAD / `HEAD...origin/main == 0 0`;
+- do not let unrelated pre-existing dirty files in that repo block the targeted doc commit;
+- include the durable-doc proof in `AUDIT_VERIFY` before printing `AUDIT_COMPLETE`.

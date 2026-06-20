@@ -11,9 +11,9 @@ Repeat across `/goal` continuations until `SUPERGOAL_RUN_COMPLETE` is printed. *
    - If it says `BLOCKED_BY_APPROVAL`, `READY_FOR_DELETE_APPROVAL`, or another explicit human/provider approval gate, stop the loop. Do not re-run checks or restate the same approval card on repeated continuations. Report the blocker once; on further identical continuation wrappers, return at most a one-line status. The GoalManager should mark this as blocked/paused rather than continuing until the turn budget is exhausted.
 2. Read `.supergoal/phases/phase-N.md`. This is your full work spec.
 3. Print `SUPERGOAL_PHASE_START` with the spec's metadata (phase number, name, task, mandatory commands, acceptance count, evidence types, dependencies).
-4. Print `SUPERGOAL_STATUS` for human readability: current phase, percent, status, current action, check summary, latest evidence, and next step. Follow `references/supergoal-status-snapshots.md`. This is not completion proof and does not replace formal markers.
+4. Print `SUPERGOAL_STATUS` for human readability: current phase, percent, status, current action, check summary, latest evidence, and next step. Include current phase, status, current action, latest evidence, and next step. This is not completion proof and does not replace formal markers.
 5. Do the work described in the spec. Run mandatory commands. Surface evidence into the transcript (command output last ~10 lines + exit code; file listings; key diff excerpts).
-6. Print `SUPERGOAL_PHASE_VERIFY`: each acceptance criterion `pass|fail` with evidence; engineering checks (build/typecheck/lint/tests); **cleanliness checks** — run `bash .supergoal/repo-state.sh added-lines <Baseline ref>` (the complete set of added/new lines since baseline, **including uncommitted and untracked work**) and grep it for stack-specific debug patterns — `console.log`/`console.error` for JS/TS; `print(`/`pprint(` for Python; `print(`/`dump(` for Swift; `fmt.Println`/`log.Println` for Go; session TODO/FIXME added this phase; dead imports added; files changed count via `bash .supergoal/repo-state.sh changed-files <Baseline ref> | wc -l`; notable diff one-liners. Any non-zero cleanliness count triggers the same 3-strike treatment as a failed criterion unless the phase spec explicitly declares a `Cleanliness override:` line (e.g., a debug-tooling phase legitimately ships logs). The complete-working-tree comparison is documented once in `references/repo-state-comparison.md`. Include an updated `SUPERGOAL_STATUS` snapshot showing check state and latest evidence.
+6. Print `SUPERGOAL_PHASE_VERIFY`: each acceptance criterion `pass|fail` with evidence; engineering checks (build/typecheck/lint/tests); **cleanliness checks** — run `bash .supergoal/scripts/repo-state.sh added-lines <Baseline ref>` (the complete set of added/new lines since baseline, **including uncommitted and untracked work**) and grep it for stack-specific debug patterns — `console.log`/`console.error` for JS/TS; `print(`/`pprint(` for Python; `print(`/`dump(` for Swift; `fmt.Println`/`log.Println` for Go; session TODO/FIXME added this phase; dead imports added; files changed count via `bash .supergoal/scripts/repo-state.sh changed-files <Baseline ref> | wc -l`; notable diff one-liners. Any non-zero cleanliness count triggers the same 3-strike treatment as a failed criterion unless the phase spec explicitly declares a `Cleanliness override:` line (e.g., a debug-tooling phase legitimately ships logs). The complete-working-tree comparison is implemented by `.supergoal/scripts/repo-state.sh`. Include an updated `SUPERGOAL_STATUS` snapshot showing check state and latest evidence.
 7. **RPD phase review.** If the phase spec declares `RPD required: yes` or the phase touches a risky area, run `RPD_PHASE_REVIEW`. Fix any gap before `SUPERGOAL_PHASE_DONE`, or mark `checked-holds` with evidence.
 8. **Memory writeback check.** Anything non-obvious learned this phase? If yes, write a memory file under the detected MEM_DIR (frontmatter: `name`, `description`, `metadata.type` of `feedback`/`project`/`reference`/`user`); link it from `MEMORY.md`. Print `MEMORY_SAVED: <name>` or `MEMORY_SAVED: none`.
 9. Print `SUPERGOAL_PHASE_DONE`. Update `STATE.md`: mark phase N completed; if N < total, set `Current phase: N+1`; if N == total, set `Current phase: AUDIT`; bump `Last update` timestamp; append a one-line event.
@@ -59,7 +59,7 @@ Do not use `Goal complete: yes` anywhere else. A phase being done is not the who
 
 ## Embedded RPD v2 gates
 
-chip-supergoal embeds RPD directly. Do not load or invoke an external `/rpd` skill. Use this protocol and the copied `references/rpd-review-gates.md` contract.
+chip-supergoal embeds RPD directly. Do not load or invoke an external `/rpd` skill. Use this protocol and the embedded RPD contract below.
 
 RPD is a mutation gate, not a commentary layer. Every finding must either mutate work/specs/commands/criteria/audit-fix specs, or be marked `checked-holds` with an evidence tier. Material claims must use one of: `direct artifact`, `provided context`, `external/current source`, or `assumption` with falsifier. Memory, stale phase text, and previous self-reports are not proof of current state.
 
@@ -122,7 +122,7 @@ Per-phase VERIFY blocks are self-reports. The audit closes that loophole by re-v
    - "Screenshot showed X" / "Manual smoke test passed" / non-deterministic checks → mark `trust-prior-verify`, don't re-run.
 5b. **Deliverable check** — for each phase block in `.supergoal/ROADMAP.md`, parse the `**Deliverables:**` bullets. For every bullet that names a file path or glob:
    - Read `Baseline ref:` from `.supergoal/STATE.md`.
-   - Run `bash .supergoal/repo-state.sh deliverable <baseline-ref> "<path>"`. It compares the **complete working tree** (committed + staged + unstaged + deleted) against the baseline and detects untracked new files separately, printing `present — <evidence>` (exit 0), `missing` / `deleted` (exit 1), `invalid baseline` (exit 2), or `unchanged — existed before baseline` (exit 3). In a git repo, invalid baselines fail closed; only non-git workspaces use filesystem existence fallback. Strategy: `references/repo-state-comparison.md`.
+   - Run `bash .supergoal/scripts/repo-state.sh deliverable <baseline-ref> "<path>"`. It compares the **complete working tree** (committed + staged + unstaged + deleted) against the baseline and detects untracked new files separately, printing `present — <evidence>` (exit 0), `missing` / `deleted` (exit 1), `invalid baseline` (exit 2), or `unchanged — existed before baseline` (exit 3). In a git repo, invalid baselines fail closed; only non-git workspaces use filesystem existence fallback. Strategy: complete-working-tree comparison helper.
    - `missing`/`deleted` (exit 1), `invalid baseline` (exit 2), or `unchanged pre-existing` (exit 3) → `AUDIT_GAP: phase <N> deliverable "<bullet>" not proven as delivered by this run`, unless the roadmap explicitly marks that deliverable as pre-existing / verification-only.
    - This is repository ground truth, not transcript self-report — it catches the "agent said done but didn't ship" case the per-phase VERIFY cannot, even when the run never committed.
 6. Print `AUDIT_VERIFY` with each phase's status, each command's exit, each criterion's pass/fail/trust-prior + evidence, and a `Deliverables:` block summarizing the step-5b check (`<deliverable>: present|missing` lines).
@@ -178,7 +178,7 @@ If the user sends any message during the run:
 
 ## Memory writeback rules
 
-See `memory_writeback_rules` section in SKILL.md. Short version:
+Short version:
 
 - Save anything non-obvious a future Supergoal run on a similar task would benefit from.
 - Frontmatter: `name`, `description`, `metadata.type` (feedback / project / reference / user).
@@ -188,7 +188,7 @@ See `memory_writeback_rules` section in SKILL.md. Short version:
 
 ## Required transcript blocks
 
-See `references/goal-format.md` for the exact format of:
+Exact required block names:
 - `SUPERGOAL_PHASE_START`
 - `SUPERGOAL_PHASE_VERIFY`
 - `RPD_PHASE_REVIEW` when required

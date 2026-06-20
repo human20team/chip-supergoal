@@ -130,6 +130,7 @@ Load only the matching reference:
 
 - Core planning: `references/core-planning-contract.md`
 - Upstream `/goal` compatibility: `references/upstream-goal-compatibility.md`
+- Upstream-shaped SuperGoal `/goal` reconciliation: `references/upstream-goal-reconciliation.md`
 - Artifact schemas: `references/artifact-schemas.md`
 - Execution loop and recovery: `references/execution-state-machine.md`
 - Research/architecture: `references/research-and-architecture-gates.md`, `references/architect-plus-lite.md`, `references/research-before-design.md`
@@ -140,6 +141,8 @@ Load only the matching reference:
 - Dev-history hardening: `references/dev-history-hardening.md` when recent Dev chat shows repeated SuperGoal/approval/delivery/restart/retrieval problems; convert incidents into gates and probes, not root bloat
 - Production safety: `references/production-safety.md`, `references/production-deploy-gates.md`, `references/process-integrity-production-runs.md`
 - Skill maintenance: `references/skill-maintenance.md`, `references/category-backed-skill-path-validation.md`, `references/legacy-skill-phase-validation.md`
+- Package hygiene / ignored files: `references/ignored-supergoal-package-hygiene.md`
+- RPD handoff to SuperGoal: `references/rpd-to-supergoal-handoff.md`
 - Historical archaeology only: `references/legacy-monolith-2026-06-19.md`
 - Full catalog: `references/INDEX.md`
 
