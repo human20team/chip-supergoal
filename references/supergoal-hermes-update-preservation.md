@@ -57,9 +57,7 @@ python - <<'PY'
 from pathlib import Path
 assert 'evaluate_structured_completion_guard' in Path('hermes_cli/goals.py').read_text()
 assert 'is_structured_handoff_reason' in Path('hermes_cli/goals.py').read_text()
-goal_launch = Path('gateway/goal_launch.py').read_text()
-assert 'from hermes_cli.goals import GoalManager' not in goal_launch
-assert 'GoalManager(' not in goal_launch
+assert 'GoalManager' not in Path('gateway/goal_launch.py').read_text()
 assert 'goal_launch' in Path('gateway/run.py').read_text()
 PY
 git diff --check

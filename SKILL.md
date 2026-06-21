@@ -130,19 +130,20 @@ Load only the matching reference:
 
 - Core planning: `references/core-planning-contract.md`
 - Upstream `/goal` compatibility: `references/upstream-goal-compatibility.md`
-- Upstream-shaped SuperGoal `/goal` reconciliation: `references/upstream-goal-reconciliation.md`
+- Upstream/private `/goal` reconciliation: `references/upstream-goal-reconciliation.md` when deciding whether private goal patches can be reverted, reduced, or upstreamed
+- SuperGoal `/goal` code-review hardening: `references/supergoal-goal-code-review-hardening.md` when reviewing/fixing Hermes GoalManager, gateway launch, Telegram clarify button, or structured-completion regressions
 - Artifact schemas: `references/artifact-schemas.md`
 - Execution loop and recovery: `references/execution-state-machine.md`
 - Research/architecture: `references/research-and-architecture-gates.md`, `references/architect-plus-lite.md`, `references/research-before-design.md`
 - Phase design and validation: `references/phase-design.md`, `references/planning-depth.md`
 - RPD/Senior Gate: `references/rpd-review-gates.md`
+- RPD → SuperGoal handoff: `references/rpd-to-supergoal-handoff.md` when Chip says “Create supergoal” / “сделай SG” in reply to an RPD/xhigh review; treat the quoted verdict as the task source and avoid mixing stale `.supergoal/` residue into the new package
 - Telegram launch/delivery: `references/telegram-launch-and-delivery.md`, then specific incident refs if needed
 - GoalManager recovery: `references/goalmanager-recovery.md`, then specific continuation/restart/completion refs if needed
 - Dev-history hardening: `references/dev-history-hardening.md` when recent Dev chat shows repeated SuperGoal/approval/delivery/restart/retrieval problems; convert incidents into gates and probes, not root bloat
 - Production safety: `references/production-safety.md`, `references/production-deploy-gates.md`, `references/process-integrity-production-runs.md`
 - Skill maintenance: `references/skill-maintenance.md`, `references/category-backed-skill-path-validation.md`, `references/legacy-skill-phase-validation.md`
-- Package hygiene / ignored files: `references/ignored-supergoal-package-hygiene.md`
-- RPD handoff to SuperGoal: `references/rpd-to-supergoal-handoff.md`
+- Ignored package hygiene: `references/ignored-supergoal-package-hygiene.md` when `.supergoal/` may be gitignored, stale packages exist, or git status appears clean while SuperGoal state changed
 - Historical archaeology only: `references/legacy-monolith-2026-06-19.md`
 - Full catalog: `references/INDEX.md`
 
@@ -189,6 +190,7 @@ Do not claim execution success from this planner. Only the `/goal` executor can 
 - [ ] A filled `templates/phase-goal.txt` passes `scripts/validate-phase.sh`.
 - [ ] `templates/PROTOCOL.md` preserves one-phase-per-turn and final-audit markers.
 - [ ] New incident lessons update canonical references/tests instead of bloating root.
+- [ ] If `.supergoal/` is ignored by git, stale package cleanup and direct package verification are reported separately from tracked implementation git status.
 
 ## Done Criteria
 

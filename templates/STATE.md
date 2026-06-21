@@ -37,6 +37,14 @@ Human-readable status rendering fields. These are for `SUPERGOAL_STATUS` only; `
 - Last checks: build=—, typecheck=—, lint=—, tests=—
 - Failure attempt: 0
 
+## Delivery state
+
+Track requested review/final artifact delivery separately from phase progress. Completion claims that require Telegram/native files must cite a receipt here.
+
+- Review files: not_requested
+- Final artifacts: not_requested
+- Latest receipt: —
+
 ## Notable events
 
 Append-only log of anything noteworthy that happened during execution (assumption corrected mid-run, retry, manual intervention, etc.). Each phase writes a line here.
