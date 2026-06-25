@@ -15,3 +15,5 @@ jobs:
         run: bash scripts/test.sh
       - name: Run workflow guard
         run: python scripts/test-user-stories.py
+      - name: Run reference taxonomy probe
+        run: python scripts/probe-reference-taxonomy.py

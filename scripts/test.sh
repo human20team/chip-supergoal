@@ -29,6 +29,7 @@ for required in \
   references/loop-design-gate.md \
   references/execution-state-machine.md \
   references/INDEX.md \
+  references/dispatch-map.md \
   references/dev-history-hardening.md \
   references/upstream-goal-compatibility.md \
   references/upstream-goal-reconciliation.md \
@@ -215,7 +216,7 @@ python3 - <<'PY'
 from pathlib import Path
 root = Path('.')
 active_files = [p for p in list(root.glob('SKILL.md')) + list((root/'references').glob('*.md')) + list((root/'templates').rglob('*.md')) + list((root/'scripts').glob('*.py'))]
-active_files = [p for p in active_files if 'legacy-monolith' not in p.name and p.as_posix() != 'scripts/test.sh']
+active_files = [p for p in active_files if 'legacy-monolith' not in p.name and p.as_posix() not in {'scripts/test.sh', 'scripts/probe-reference-taxonomy.py'}]
 banned = [
     'exactly three native',
     'three native `.md` files',
@@ -497,6 +498,9 @@ pass "dev-history hardening contracts"
 
 python3 scripts/test-user-stories.py
 pass "user-story contract coverage"
+
+python3 scripts/probe-reference-taxonomy.py
+pass "reference taxonomy contracts"
 
 python3 scripts/probe-upstream-goal-compat.py
 pass "upstream goal compatibility contracts"

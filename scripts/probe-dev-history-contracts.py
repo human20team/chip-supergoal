@@ -32,7 +32,8 @@ prod = read('references/production-safety.md')
 skillm = read('references/skill-maintenance.md')
 execsm = read('references/execution-state-machine.md')
 
-require('references/dev-history-hardening.md' in skill, 'root does not dispatch dev-history-hardening')
+dispatch = read('references/dispatch-map.md')
+require('references/dev-history-hardening.md' in skill or 'dev-history-hardening.md' in dispatch, 'root/dispatch-map does not dispatch dev-history-hardening')
 require('dev-history-hardening.md' in index, 'INDEX does not list dev-history-hardening')
 for marker in [
     'Retrieval-before-ask', 'Safe-lane approval', 'Bounded live manifest',

@@ -131,33 +131,22 @@ Load `references/rpd-review-gates.md` for the full evidence-tier, severity, over
 
 ## Reference dispatch
 
-Load only the matching reference:
+Load only the matching canonical reference. Start with `references/dispatch-map.md` when the correct reference is not obvious.
 
-- Core planning: `references/core-planning-contract.md`
-- Upstream `/goal` compatibility: `references/upstream-goal-compatibility.md`
-- Upstream/private `/goal` reconciliation: `references/upstream-goal-reconciliation.md` when deciding whether private goal patches can be reverted, reduced, or upstreamed
-- SuperGoal `/goal` code-review hardening: `references/supergoal-goal-code-review-hardening.md` when reviewing/fixing Hermes GoalManager, gateway launch, Telegram clarify button, or structured-completion regressions
-- Artifact boundaries and review pack v2: `references/artifact-boundaries.md` (canonical source for review-pack files, owner/stage, receipts, and planning-vs-final delivery boundaries)
-- Artifact schemas: `references/artifact-schemas.md`
-- Execution loop and recovery: `references/execution-state-machine.md`
-- Markdown report/state shell quoting pitfall: `references/markdown-report-shell-quoting.md` when writing `.supergoal/reports/*.md`, `STATE.md`, launch cards, or receipts from shell scripts; use single-quoted heredocs or Python writers and re-read generated files before phase done.
-- Research/architecture: `references/research-and-architecture-gates.md`, `references/architect-plus-lite.md`, `references/research-before-design.md`
-- Loop Design Gate: `references/loop-design-gate.md` when adding/reviewing the pre-launch loop harness (`LOOP_DESIGN.md`), judge/reviewer seat, stop/budget/boundary controls, egress/redaction rules, or LOOPER-style improvements to SuperGoal. Do not create a standalone `/looper` by default.
-- Source-lock recovery: `references/source-lock-recovery.md` when a SuperGoal is blocked on missing exact URLs, dates, runtime mapping, or CRM/application destination; actively recover from prior sessions, Telegram history, calendars, runtime/app indexes, and live content snapshots, verify public URLs, then shrink blockers in `STATE.md`. If still blocked, stop with one concise `BLOCKED_BY_SOURCE_LOCK` instead of repeating the same blocker on every continuation.
-- Phase design and validation: `references/phase-design.md`, `references/planning-depth.md`
-- RPD/Senior Gate: `references/rpd-review-gates.md`
-- RPD → SuperGoal handoff: `references/rpd-to-supergoal-handoff.md` when Chip says “Create supergoal” / “сделай SG” in reply to an RPD/xhigh review; treat the quoted verdict as the task source and avoid mixing stale `.supergoal/` residue into the new package
-- Telegram launch/delivery: `references/telegram-launch-and-delivery.md`, then specific incident refs if needed
-- GoalManager recovery: `references/goalmanager-recovery.md`, then specific continuation/restart/completion refs if needed
-- Repeated post-complete standing-goal wrappers: `references/repeated-complete-continuations.md` when `STATE.md` is terminal (`DONE`/`COMPLETE`) and the host keeps sending “Continue working toward this goal”; answer once at most, then `COMPLETE — no-op.`
-- Dev-history hardening: `references/dev-history-hardening.md` when recent Dev chat shows repeated SuperGoal/approval/delivery/restart/retrieval problems; convert incidents into gates and probes, not root bloat
-- Production safety: `references/production-safety.md`, `references/production-deploy-gates.md`, `references/process-integrity-production-runs.md`
-- Human20 SEO/AEO/GEO readiness: `references/human20-seo-aeo-geo-planning.md` when Chip asks for SEO/AEO/GEO/AI-search readiness or a SuperGoal for `human20.app` discoverability; start from live audit evidence and source-lock inaccessible Telegram media honestly.
-- Skill maintenance: `references/skill-maintenance.md`, `references/category-backed-skill-path-validation.md`, `references/legacy-skill-phase-validation.md`
-- Skill feature audit: `references/skill-feature-audit-user-stories.md` when auditing a skill end-to-end via canonical user-story spreadsheet, deterministic behavior tests, fix loop, and post-fix retest
-- Ignored package hygiene: `references/ignored-supergoal-package-hygiene.md` when `.supergoal/` may be gitignored, stale packages exist, or git status appears clean while SuperGoal state changed
-- Historical archaeology only: `references/legacy-monolith-2026-06-19.md`
-- Full catalog: `references/INDEX.md`
+Core active references:
+
+- Planning/controller: `references/core-planning-contract.md`
+- Artifact boundaries / review pack v2: `references/artifact-boundaries.md`
+- Generated schemas: `references/artifact-schemas.md`
+- Execution state machine / final audit: `references/execution-state-machine.md`
+- Standard `/goal` compatibility: `references/upstream-goal-compatibility.md`
+- Loop Design Gate: `references/loop-design-gate.md`
+- RPD/Senior review: `references/rpd-review-gates.md`
+- Telegram launch/delivery: `references/telegram-launch-and-delivery.md`
+- Production safety: `references/production-safety.md`
+- Skill maintenance: `references/skill-maintenance.md`
+
+Specialist refs and superseded incident clusters live in `references/dispatch-map.md` and `references/INDEX.md`. Incident refs are for forensics unless the dispatch map names them for the current trigger.
 
 If a new incident only adds another example of an existing invariant, update the relevant reference. Add to root only when it introduces a new invariant or public marker.
 
@@ -165,7 +154,7 @@ If a new incident only adds another example of an existing invariant, update the
 
 - `LAUNCH_GOAL.md` is the replyable launch file. It contains the exact upstream-compatible `SUPERGOAL_GOAL_BODY:` line.
 - `ROADMAP.md`, `THINKING.md`, and `PROTOCOL.md` must not contain their own actual launch body line.
-- Planning-stage review pack is exactly four native `.md` files by default: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`.
+- Planning-stage review pack uses `review_pack_v2`: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`, plus `RESEARCH.md` when non-empty.
 - **Chip default: always send the planning-stage `.md` files back into the current Telegram thread for Chip to review, even if he did not explicitly ask for files.** This is a standing preference for `chip-supergoal`, not an optional delivery mode. Include native `MEDIA:` attachments or use the Telegram delivery script, then verify delivery/receipt before saying the package is ready. A text summary without the `.md` files is incomplete.
 - For Chip-facing SuperGoal packages with useful supporting context, also send `RESEARCH.md` when it exists and is not empty; keep `PROTOCOL.md`, `STATE.md`, and phase specs on disk unless Chip asks for the full bundle.
 - If Telegram/native file delivery is required or triggered by the Chip default above, the run must create/send receipts and verify `ok=true` and `sent=true` before declaring the corresponding gate closed.

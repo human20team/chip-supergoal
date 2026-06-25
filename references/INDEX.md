@@ -2,6 +2,7 @@
 
 ## Canonical references
 
+- `dispatch-map.md` — active reference taxonomy, canonical dispatch table, superseded incident clusters, and banned stale-policy phrases.
 - `upstream-goal-compatibility.md` — standard Hermes `/goal` compiler boundary, judge-proof turn endings, blockers, and budget rules.
 - `core-planning-contract.md` — Stage 0-7 planner workflow.
 - `artifact-boundaries.md` — canonical review_pack_v2 and artifact owner/stage/delivery/receipt boundaries.
