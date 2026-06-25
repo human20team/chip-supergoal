@@ -188,7 +188,7 @@ pass "validate-loop-design rejects launch body"
 # private keys, JWT-like values, and unredacted token assignments are not.
 python3 - <<'PY'
 import pathlib, re, sys
-files = [p for p in pathlib.Path('.').rglob('*') if p.is_file() and not any(part in {'.git', '.shaw', '.supergoal'} for part in p.parts)]
+files = [p for p in pathlib.Path('.').rglob('*') if p.is_file() and not any(part in {'.git', '.shaw', '.supergoal', '__pycache__'} for part in p.parts) and p.suffix != '.pyc']
 patterns = [
     ('private_key_block', re.compile(r'-----BEGIN (?:RSA |OPENSSH |EC |DSA |)?PRIVATE KEY-----')),
     ('github_token', re.compile(r'gh[pousr]_[A-Za-z0-9_]{20,}')),
@@ -211,6 +211,9 @@ if violations:
     sys.exit(1)
 PY
 pass "private-boundary scan"
+
+python3 -m unittest discover -s tests
+pass "phase-01 regression fixtures (expected failures documented)"
 
 python3 - <<'PY'
 from pathlib import Path

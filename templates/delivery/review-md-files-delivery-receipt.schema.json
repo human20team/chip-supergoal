@@ -1,6 +1,7 @@
 {
   "type": "object",
-  "required": ["ok", "sent", "kind", "pack_version", "target", "files", "hashes", "message_ids"],
+  "additionalProperties": false,
+  "required": ["ok", "sent", "kind", "pack_version", "target", "files", "hashes", "message_ids", "sent_at"],
   "properties": {
     "ok": {"const": true},
     "sent": {"const": true},
@@ -9,7 +10,9 @@
     "target": {"type": "string", "minLength": 1},
     "files": {
       "type": "array",
-      "items": {"type": "string"},
+      "minItems": 4,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+\\.md$"},
       "allOf": [
         {"contains": {"const": "THINKING.md"}},
         {"contains": {"const": "LOOP_DESIGN.md"}},
@@ -17,7 +20,13 @@
         {"contains": {"const": "LAUNCH_GOAL.md"}}
       ]
     },
-    "hashes": {"type": "object"},
-    "message_ids": {"type": "array"}
+    "hashes": {
+      "type": "object",
+      "minProperties": 4,
+      "additionalProperties": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+    },
+    "message_ids": {"type": "array", "minItems": 4, "items": {"type": "string", "minLength": 1}},
+    "sent_at": {"type": "string", "minLength": 1},
+    "extensions": {"type": "object"}
   }
 }

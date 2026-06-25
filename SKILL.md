@@ -148,16 +148,19 @@ Core active references:
 
 Specialist refs and superseded incident clusters live in `references/dispatch-map.md` and `references/INDEX.md`. Incident refs are for forensics unless the dispatch map names them for the current trigger.
 
+For self-upgrades of `chip-supergoal` toward Architect+ / contract-compiler behavior, load `references/architect-plus-v3-upgrade-execution-lessons.md` before executing or repairing the mission package. It captures path-drift handling, non-git proof shape, temporary xfail cleanup, bytecode/privacy-scan pitfall, and local-alpha final audit rules.
+
 If a new incident only adds another example of an existing invariant, update the relevant reference. Add to root only when it introduces a new invariant or public marker.
 
 ## Launch and delivery rules
 
 - `LAUNCH_GOAL.md` is the replyable launch file. It contains the exact upstream-compatible `SUPERGOAL_GOAL_BODY:` line.
 - `ROADMAP.md`, `THINKING.md`, and `PROTOCOL.md` must not contain their own actual launch body line.
+- When creating a SuperGoal **about the `chip-supergoal` skill itself**, do not leave the generated package under the skill root if the package contains a real `LAUNCH_GOAL.md`: the skill self-test scans the skill tree and expects only the template launch body. Put the mission package in an external workspace path (for example `/home/hermes/workspace/.supergoal/<name>`) or ensure it is outside the self-test scan before running `scripts/test.sh`.
 - Planning-stage review pack uses `review_pack_v2`: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`, plus `RESEARCH.md` when non-empty.
 - **Chip default: always send the planning-stage `.md` files back into the current Telegram thread for Chip to review, even if he did not explicitly ask for files.** This is a standing preference for `chip-supergoal`, not an optional delivery mode. Include native `MEDIA:` attachments or use the Telegram delivery script, then verify delivery/receipt before saying the package is ready. A text summary without the `.md` files is incomplete.
 - For Chip-facing SuperGoal packages with useful supporting context, also send `RESEARCH.md` when it exists and is not empty; keep `PROTOCOL.md`, `STATE.md`, and phase specs on disk unless Chip asks for the full bundle.
-- If Telegram/native file delivery is required or triggered by the Chip default above, the run must create/send receipts and verify `ok=true` and `sent=true` before declaring the corresponding gate closed.
+- If Telegram/native file delivery is required or triggered by the Chip default above, the run must create/send receipts and verify `ok=true` and `sent=true` before declaring the corresponding gate closed. If a multi-file send partially succeeds or one attachment times out, resend only the missing file(s), store all successful message IDs in the receipt, and record the partial-send note instead of treating the whole review pack as failed or silently complete.
 - Final artifacts require `SUPERGOAL_FILES_SENT` before `SUPERGOAL_RUN_COMPLETE` when final-file delivery was requested.
 
 ## Verification checklist
