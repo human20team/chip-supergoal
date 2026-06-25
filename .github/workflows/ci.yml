@@ -9,5 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install test dependencies
+        run: python -m pip install --upgrade PyYAML
       - name: Run regression suite
         run: bash scripts/test.sh
+      - name: Run workflow guard
+        run: python scripts/test-user-stories.py

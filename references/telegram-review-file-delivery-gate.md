@@ -1,10 +1,12 @@
 # Telegram review-file delivery gate for SuperGoal packages
 
-When Chip asks for SuperGoal/ТЗ files, the planning-stage package must be delivered as exactly three native Telegram attachments before asking him to start or dispatch:
+When Chip asks for SuperGoal/ТЗ files, the planning-stage package must be delivered as canonical `review_pack_v2` native Telegram attachments before asking him to start or dispatch:
 
 1. `THINKING.md`
-2. `ROADMAP.md`
-3. `LAUNCH_GOAL.md`
+2. `LOOP_DESIGN.md`
+3. `ROADMAP.md`
+4. `LAUNCH_GOAL.md`
+5. `RESEARCH.md` only when it exists and is non-empty
 
 Do not rely on “I’ll send later”, archive-only delivery, or pasted text. If the delivery is missing, Chip will reasonably say “не вижу файлов”.
 

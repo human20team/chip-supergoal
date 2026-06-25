@@ -1,12 +1,22 @@
 {
   "type": "object",
-  "required": ["ok", "sent", "kind", "target", "files", "hashes", "message_ids"],
+  "required": ["ok", "sent", "kind", "pack_version", "target", "files", "hashes", "message_ids"],
   "properties": {
     "ok": {"const": true},
     "sent": {"const": true},
     "kind": {"const": "review-md-files"},
+    "pack_version": {"const": "review_pack_v2"},
     "target": {"type": "string", "minLength": 1},
-    "files": {"type": "array", "items": {"type": "string"}, "contains": {"const": "LAUNCH_GOAL.md"}},
+    "files": {
+      "type": "array",
+      "items": {"type": "string"},
+      "allOf": [
+        {"contains": {"const": "THINKING.md"}},
+        {"contains": {"const": "LOOP_DESIGN.md"}},
+        {"contains": {"const": "ROADMAP.md"}},
+        {"contains": {"const": "LAUNCH_GOAL.md"}}
+      ]
+    },
     "hashes": {"type": "object"},
     "message_ids": {"type": "array"}
   }

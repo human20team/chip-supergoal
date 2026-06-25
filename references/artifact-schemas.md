@@ -95,7 +95,7 @@ Must pass `scripts/validate-phase.sh`. See root Phase spec contract.
 Planning review receipt:
 
 ```json
-{"ok": true, "sent": true, "target": "...", "files": ["THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "LAUNCH_GOAL.md"], "hashes": {}}
+{"ok": true, "sent": true, "kind": "review-md-files", "pack_version": "review_pack_v2", "target": "...", "files": ["THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "LAUNCH_GOAL.md"], "hashes": {}}
 ```
 
 Final artifacts receipt:

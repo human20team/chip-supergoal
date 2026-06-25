@@ -8,7 +8,7 @@ Use this when planning, implementing, or verifying SuperGoal dispatch UX in Tele
 
 Do not make the long plan text the primary action surface. Split review artifacts from launch controls:
 
-1. Send native review artifacts first, exactly three by default:
+1. Send native review artifacts first using `review_pack_v2` by default:
    - `THINKING.md`
    - `ROADMAP.md`
    - `LAUNCH_GOAL.md`

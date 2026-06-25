@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import csv, re, sys
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
@@ -99,6 +100,10 @@ CHECKS = {
 'SG-054': lambda: all(exists(p) for p in ['references/goalmanager-completion-loop-incidents.md','references/standing-goal-final-audit-completion.md','references/rollout-final-audit-lessons.md']),
 'SG-055': lambda: exists('README.md') and any_contains('README.md','SuperGoal','chip-supergoal'),
 }
+parser = argparse.ArgumentParser(description='Validate chip-supergoal user-story coverage.')
+parser.add_argument('--update-csv', action='store_true', help='write updated status/evidence columns back to docs/chip-supergoal-user-stories.csv')
+args = parser.parse_args()
+
 rows=list(csv.DictReader(CSV_PATH.open(encoding='utf-8')))
 # Some historical rows may contain extra comma-split fields if edited manually.
 # Do not let DictWriter crash on the implicit None key; the targeted assertions
@@ -106,23 +111,37 @@ rows=list(csv.DictReader(CSV_PATH.open(encoding='utf-8')))
 for r in rows:
     r.pop(None, None)
 fail=[]
+updated_rows=[]
 for r in rows:
     ok=CHECKS.get(r['id'], lambda: False)()
+    new_r=dict(r)
     if ok:
-        r['status']='passed'
-        r['evidence']='scripts/test-user-stories.py targeted assertion passed'
-        r['errors']=''
-        r['retest_status']='passed'
+        new_r['status']='passed'
+        new_r['evidence']='scripts/test-user-stories.py targeted assertion passed'
+        new_r['errors']=''
+        new_r['retest_status']='passed'
     else:
-        r['status']='failed'
-        r['evidence']='scripts/test-user-stories.py targeted assertion failed'
-        r['errors']='expected behaviour not proven by static/source assertion'
-        r['retest_status']='not_retested'
+        new_r['status']='failed'
+        new_r['evidence']='scripts/test-user-stories.py targeted assertion failed'
+        new_r['errors']='expected behaviour not proven by static/source assertion'
+        new_r['retest_status']='not_retested'
         fail.append(r['id'])
-with CSV_PATH.open('w', newline='', encoding='utf-8') as f:
-    w=csv.DictWriter(f, fieldnames=rows[0].keys(), lineterminator='\n')
-    w.writeheader(); w.writerows(rows)
-print(f'USER_STORY_TESTS total={len(rows)} passed={len(rows)-len(fail)} failed={len(fail)}')
+    updated_rows.append(new_r)
+if args.update_csv:
+    with CSV_PATH.open('w', newline='', encoding='utf-8') as f:
+        w=csv.DictWriter(f, fieldnames=updated_rows[0].keys(), lineterminator='\n')
+        w.writeheader(); w.writerows(updated_rows)
+else:
+    drift=[]
+    for old,new in zip(rows, updated_rows):
+        for field in ('status','evidence','errors','retest_status'):
+            if old.get(field,'') != new.get(field,''):
+                drift.append(f"{old.get('id')}:{field}")
+    if drift:
+        print('CSV_STATUS_DRIFT '+','.join(drift[:20]))
+        print('Run scripts/test-user-stories.py --update-csv to refresh stored evidence.')
+        fail.extend(['csv-drift'])
+print(f'USER_STORY_TESTS total={len(rows)} passed={len(rows)-len([x for x in fail if x != "csv-drift"])} failed={len([x for x in fail if x != "csv-drift"])}')
 if fail:
     print('FAILED '+','.join(fail))
     sys.exit(1)

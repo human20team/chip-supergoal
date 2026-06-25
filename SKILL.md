@@ -137,6 +137,7 @@ Load only the matching reference:
 - Upstream `/goal` compatibility: `references/upstream-goal-compatibility.md`
 - Upstream/private `/goal` reconciliation: `references/upstream-goal-reconciliation.md` when deciding whether private goal patches can be reverted, reduced, or upstreamed
 - SuperGoal `/goal` code-review hardening: `references/supergoal-goal-code-review-hardening.md` when reviewing/fixing Hermes GoalManager, gateway launch, Telegram clarify button, or structured-completion regressions
+- Artifact boundaries and review pack v2: `references/artifact-boundaries.md` (canonical source for review-pack files, owner/stage, receipts, and planning-vs-final delivery boundaries)
 - Artifact schemas: `references/artifact-schemas.md`
 - Execution loop and recovery: `references/execution-state-machine.md`
 - Markdown report/state shell quoting pitfall: `references/markdown-report-shell-quoting.md` when writing `.supergoal/reports/*.md`, `STATE.md`, launch cards, or receipts from shell scripts; use single-quoted heredocs or Python writers and re-read generated files before phase done.

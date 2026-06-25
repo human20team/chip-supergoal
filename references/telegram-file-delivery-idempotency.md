@@ -10,7 +10,7 @@ A delivery gate must prevent both missing files and duplicate files. A previous 
 
 ## Required pattern
 
-- Planning review pack is exactly three native `.md` files by default: `THINKING.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`.
+- Planning review pack is `review_pack_v2` by default: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`, plus non-empty `RESEARCH.md`.
 - Scripted delivery writes a receipt with: `ok`, `sent`, `target`, `files[]`, `bytes`, `sha256`, timestamp.
 - Before sending, script checks existing receipt. If `ok=true`, `sent=true`, target matches, and file hashes match, exit 0 with `skipped_duplicate_send=true`; do not resend.
 - Use `SUPERGOAL_FORCE_RESEND=1` only after Chip explicitly asks for resend.

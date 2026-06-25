@@ -6,7 +6,7 @@ Use this reference when building or repairing SuperGoal launch through Telegram 
 
 ## Contract
 
-- Human-facing launch pack defaults to exactly three native files: `THINKING.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`.
+- Human-facing launch pack defaults to `review_pack_v2`: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`, plus non-empty `RESEARCH.md`.
 - Only `LAUNCH_GOAL.md` may contain `SUPERGOAL_GOAL_BODY:`.
 - `THINKING.md`, `ROADMAP.md`, `STATE.md`, `PROTOCOL.md`, `phases/*`, and reports are review/state artifacts, not launch targets.
 - Chip replies `/goal` only to `LAUNCH_GOAL.md` unless an explicit button launch path is implemented and verified.

@@ -4,6 +4,7 @@
 
 - `upstream-goal-compatibility.md` — standard Hermes `/goal` compiler boundary, judge-proof turn endings, blockers, and budget rules.
 - `core-planning-contract.md` — Stage 0-7 planner workflow.
+- `artifact-boundaries.md` — canonical review_pack_v2 and artifact owner/stage/delivery/receipt boundaries.
 - `artifact-schemas.md` — schemas for generated files and receipts.
 - `execution-state-machine.md` — `/goal` executor state machine and recovery precedence.
 - `research-and-architecture-gates.md` — current-facts, build-vs-buy, Architect+ lite.

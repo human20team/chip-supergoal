@@ -4,7 +4,7 @@ Use this when a SuperGoal is launched from Telegram through a native `.md` file 
 
 ## Contract
 
-- Human-facing pack is normally exactly three files: `THINKING.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`.
+- Human-facing pack is normally `review_pack_v2`: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`, plus non-empty `RESEARCH.md`.
 - Only `LAUNCH_GOAL.md` may contain `SUPERGOAL_GOAL_BODY:`.
 - `THINKING.md`, `ROADMAP.md`, `STATE.md`, `PROTOCOL.md`, and phase files are review/internal artifacts and must not be reply targets.
 - Bare reply `/goal` to `LAUNCH_GOAL.md` must keep `event.text == "/goal"`; hydrated document text belongs in `event.reply_to_text`, not in command args.

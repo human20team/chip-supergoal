@@ -4,7 +4,7 @@ Use when creating or troubleshooting a SuperGoal launch in Telegram where Chip r
 
 ## Human-facing artifact rule
 
-Default to exactly three files:
+Default to `review_pack_v2`:
 
 1. `THINKING.md` — reasoning and trade-offs.
 2. `ROADMAP.md` — phase plan and acceptance shape.

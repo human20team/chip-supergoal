@@ -17,13 +17,15 @@ Do not use `ROADMAP.md`, `THINKING.md`, or `PROTOCOL.md` as hidden launch surfac
 
 ## Review delivery gate
 
-When Chip asks for SuperGoal/ТЗ files, send exactly three native `.md` files by default:
+When Chip asks for SuperGoal/ТЗ files, send the canonical `review_pack_v2` native `.md` files by default:
 
 - `THINKING.md`
+- `LOOP_DESIGN.md`
 - `ROADMAP.md`
 - `LAUNCH_GOAL.md`
+- `RESEARCH.md` only when it exists and is non-empty
 
-The planner must script delivery when available and write `.supergoal/out/review-md-files-delivery-receipt.json` with `ok=true` and `sent=true`. If sending fails, print `SUPERGOAL_REVIEW_FILES_BLOCKED` with the reason and do not pretend the files were delivered.
+`references/artifact-boundaries.md` is the source of truth for review-pack ownership, stage, receipt, and planning-vs-final delivery boundaries. The planner must script delivery when available and write `.supergoal/out/review-md-files-delivery-receipt.json` with `ok=true`, `sent=true`, and `pack_version="review_pack_v2"`. If sending fails, print `SUPERGOAL_REVIEW_FILES_BLOCKED` with the reason and do not pretend the files were delivered.
 
 ## Final artifact gate
 

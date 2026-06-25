@@ -25,7 +25,7 @@ event.reply_to_text = "[Content of replied-to LAUNCH_GOAL.md]:\n...file..."
 
 ## User-facing contract
 
-Send exactly three human-facing files by default:
+Send `review_pack_v2` human-facing files by default:
 
 1. `THINKING.md` — reasoning/review.
 2. `ROADMAP.md` — execution map, review-only.

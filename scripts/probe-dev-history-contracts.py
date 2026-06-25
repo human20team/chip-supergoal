@@ -39,8 +39,11 @@ for marker in [
     'Repo/private delivery', 'Gateway restart/autoresume', 'Continuation over status-only'
 ]:
     require(marker in protocol, f'PROTOCOL missing {marker}')
-for phrase in ['у тебя они уже есть', 'three native `.md` files', 'remote HEAD', 'bounded manifest']:
+for phrase in ['у тебя они уже есть', 'review_pack_v2', 'remote HEAD', 'bounded manifest']:
     require(phrase in dev, f'dev-history reference missing {phrase}')
+artifact_boundaries = read('references/artifact-boundaries.md')
+for phrase in ['review_pack_v2', 'LOOP_DESIGN.md', 'Planning delivery failure blocks `READY_TO_DISPATCH`']:
+    require(phrase in artifact_boundaries, f'artifact boundaries missing {phrase}')
 require('Safe-lane vs live-lane approval matrix' in prod, 'production safety missing approval matrix')
 require('Repo/private delivery gate' in skillm, 'skill maintenance missing repo/private delivery gate')
 require('Retrieval-before-ask gate' in execsm, 'execution state machine missing retrieval gate')
@@ -61,6 +64,8 @@ for rel in ['templates/delivery/review-md-files-delivery-receipt.schema.json','t
     schema=json.loads(read(rel))
     require(schema['properties']['ok'].get('const') is True, f'{rel} does not require ok=true')
     require(schema['properties']['sent'].get('const') is True, f'{rel} does not require sent=true')
+review_schema=json.loads(read('templates/delivery/review-md-files-delivery-receipt.schema.json'))
+require(review_schema['properties']['pack_version'].get('const') == 'review_pack_v2', 'review schema missing review_pack_v2')
 
 if failures:
     print('\n'.join('FAIL: '+f for f in failures), file=sys.stderr)

@@ -24,6 +24,7 @@ for required in \
   templates/LAUNCH_GOAL.md \
   references/rpd-review-gates.md \
   references/core-planning-contract.md \
+  references/artifact-boundaries.md \
   references/artifact-schemas.md \
   references/loop-design-gate.md \
   references/execution-state-machine.md \
@@ -44,6 +45,120 @@ pass "install layout contains required assets"
 
 bash scripts/validate-loop-design.sh templates/LOOP_DESIGN.md >/dev/null
 pass "loop-design template validates"
+
+loop_instantiated="$(mktemp)"
+cat >"$loop_instantiated" <<'EOF'
+# LOOP_DESIGN.md
+
+## Goal
+Ship a falsifiable refactor while preserving the current chip-supergoal contract and tests.
+
+## Context sources
+- User objective: refactor chip-supergoal through Shaw xhigh review.
+- Repository / filesystem: /home/hermes/workspace/chip-supergoal.
+- Canonical source: references/artifact-boundaries.md.
+
+## Host model
+- Host: Hermes /goal executor with subagents allowed only for review.
+
+## Reviewer / judge model
+- Reviewer/judge: Shaw xhigh reviewer.
+- Mode: verdict plus mutation requests.
+- Required evidence tier: tests and diff evidence.
+
+## Verification gates
+1. Gate: aggregate regression suite
+   - check: bash scripts/test.sh
+   - pass condition: exit 0
+   - failure mutation: patch the failing contract before continuing
+
+## State checkpoints
+- State file: .supergoal/STATE.md.
+- Event ledger: reports/phase-N.md.
+
+## Stop conditions
+- hard blocker: missing canonical source.
+- no-progress: stop after 2 repeated failed attempts.
+- max revisions: <= 3 per failed gate.
+- max iterations: 12.
+- budget exceeded: stop after 30 minutes or 2M tokens.
+
+## Budget
+- phases: 5.
+- max iterations: 12.
+- revise limit per failed gate: 3.
+- token/time target: 2M tokens / 30 minutes.
+
+## Boundaries
+- secrets / credentials: never read or print tokens; redact env files.
+- private Telegram / personal data: no egress without explicit request.
+- production / public channels: approval required.
+
+## Failure recovery
+- validation failure: retry after patch.
+- test failure: fix or rollback current slice.
+- delivery failure: fail closed with handoff.
+
+## Human approvals
+- planning review: required before launch.
+- dangerous action approvals: required for secrets, payments, destructive data, DNS, prod.
+
+## ASCII preview
+```text
+PLAN -> TEST -> REVIEW -> FIX <=3 -> AUDIT -> DONE
+```
+EOF
+bash scripts/validate-loop-design.sh --instantiated "$loop_instantiated" >/dev/null
+rm -f "$loop_instantiated"
+pass "validate-loop-design instantiated fixture validates"
+
+loop_weak="$(mktemp)"
+cat >"$loop_weak" <<'EOF'
+# LOOP_DESIGN.md
+
+## Goal
+Do the work.
+
+## Context sources
+- Repo.
+
+## Host model
+- Host.
+
+## Reviewer / judge model
+- Judge.
+
+## Verification gates
+- Looks good.
+
+## State checkpoints
+- State file.
+
+## Stop conditions
+- Stop when done.
+
+## Budget
+- Enough.
+
+## Boundaries
+- Be careful.
+
+## Failure recovery
+- Try again.
+
+## Human approvals
+- Ask if needed.
+
+## ASCII preview
+```text
+A -> B
+```
+EOF
+if bash scripts/validate-loop-design.sh --instantiated "$loop_weak" >/dev/null 2>&1; then
+  fail "validate-loop-design accepted weak instantiated loop"
+fi
+rm -f "$loop_weak"
+pass "validate-loop-design rejects weak instantiated loop"
 
 loop_missing="$(mktemp)"
 cat >"$loop_missing" <<'EOF'
@@ -95,6 +210,32 @@ if violations:
     sys.exit(1)
 PY
 pass "private-boundary scan"
+
+python3 - <<'PY'
+from pathlib import Path
+root = Path('.')
+active_files = [p for p in list(root.glob('SKILL.md')) + list((root/'references').glob('*.md')) + list((root/'templates').rglob('*.md')) + list((root/'scripts').glob('*.py'))]
+active_files = [p for p in active_files if 'legacy-monolith' not in p.name and p.as_posix() != 'scripts/test.sh']
+banned = [
+    'exactly three native',
+    'three native `.md` files',
+    'one numbered phase per turn',
+    'stop with SUPERGOAL_TURN_YIELD',
+    'do not chain phases',
+    'execute only current phase',
+]
+hits=[]
+for p in active_files:
+    text=p.read_text(errors='ignore')
+    for phrase in banned:
+        if phrase in text:
+            hits.append(f'{p}:{phrase}')
+assert not hits, hits
+artifact = Path('references/artifact-boundaries.md').read_text(errors='ignore')
+for required in ['review_pack_v2', 'LOOP_DESIGN.md', 'pack_version: "review_pack_v2"', 'Planning delivery failure blocks `READY_TO_DISPATCH`']:
+    assert required in artifact, required
+print('PASS: artifact boundary and stale-phrase contract')
+PY
 
 python3 - <<'PY'
 from pathlib import Path
@@ -353,6 +494,9 @@ pass "protocol continues through phase boundaries"
 
 python3 scripts/probe-dev-history-contracts.py
 pass "dev-history hardening contracts"
+
+python3 scripts/test-user-stories.py
+pass "user-story contract coverage"
 
 python3 scripts/probe-upstream-goal-compat.py
 pass "upstream goal compatibility contracts"

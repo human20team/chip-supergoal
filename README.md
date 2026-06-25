@@ -6,6 +6,7 @@ Private Chip/Hermes SuperGoal planner skill. It creates a disk-backed `.supergoa
 
 - `.supergoal/THINKING.md`
 - `.supergoal/RESEARCH.md` when current research is required
+- `.supergoal/LOOP_DESIGN.md`
 - `.supergoal/ROADMAP.md`
 - `.supergoal/STATE.md`
 - `.supergoal/PROTOCOL.md`

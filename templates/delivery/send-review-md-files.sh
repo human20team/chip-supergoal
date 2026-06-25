@@ -45,6 +45,7 @@ json.dump({
   'ok': True,
   'sent': True,
   'kind': 'review-md-files',
+  'pack_version': 'review_pack_v2',
   'target': target,
   'files': sorted(json.loads(hashes).keys()),
   'hashes': json.loads(hashes),

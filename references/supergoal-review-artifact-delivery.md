@@ -14,7 +14,7 @@ A false positive is worse than a cautious local-only handoff: Chip expects files
    - `LAUNCH_GOAL.md`
 2. `LAUNCH_GOAL.md` is the only file Chip should reply `/goal` to.
 3. If Chip asks for “all artifacts”, also send a zip bundle of `.supergoal/`, excluding secrets/caches/runtime junk.
-4. Do not replace the three native files with only a zip unless Chip asked specifically for a single archive.
+4. Do not replace the native `review_pack_v2` files with only a zip unless Chip asked specifically for a single archive.
 5. Keep `STATE.md`, `PROTOCOL.md`, `phases/`, reports, `context.md`, `repo-map.md`, and `tools.md` internal by default, but include them in the full bundle when Chip explicitly asks for all artifacts.
 
 ## Correction pattern
