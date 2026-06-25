@@ -11,7 +11,7 @@ echo
 
 # --- High level shape ---
 echo "## Top-level layout"
-ls -A1 2>/dev/null | grep -v "^\." | head -40 | sed 's/^/- /'
+find . -mindepth 1 -maxdepth 1 -print 2>/dev/null | sed 's#^./##' | awk 'substr($0,1,1)!="." {print}' | sort | head -40 | sed 's/^/- /'
 echo
 
 # --- Source dirs ---

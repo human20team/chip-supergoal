@@ -11,8 +11,9 @@ echo
 
 echo "## Project directory"
 echo "- Project root: detected"
-echo "- Contents: $(ls -A1 2>/dev/null | wc -l | tr -d ' ') entries"
-ls -A1 2>/dev/null | head -10 | sed 's/^/  - /'
+entry_count=$(find . -mindepth 1 -maxdepth 1 -print 2>/dev/null | wc -l | tr -d ' ')
+echo "- Contents: $entry_count entries"
+find . -mindepth 1 -maxdepth 1 -print 2>/dev/null | sed 's#^./##' | sort | head -10 | sed 's/^/  - /'
 echo
 
 echo "## System"
