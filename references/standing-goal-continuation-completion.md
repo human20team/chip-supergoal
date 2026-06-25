@@ -55,13 +55,27 @@ Only stop at complete or blocker.
 
 ## Repeated continuation after completion
 
-If Chip sends the same continuation prompt after completion, answer compactly:
+If Chip sends the same continuation prompt after completion, first prevent the gateway from scheduling another synthetic tick:
+
+1. Verify disk completion (`STATE.md` terminal phase/status + final audit has standalone `AUDIT_COMPLETE` and `SUPERGOAL_RUN_COMPLETE`).
+2. Inspect the active Hermes `/goal` state for the current session when possible. If it is still `active`, mark that stale goal row `done` with a disk-backed reason before replying.
+3. If you cannot update the goal state row, include the terminal markers as standalone lines in the reply so GoalManager's structured guard can mark the goal done. A bare `Goal complete. Stop.` is not enough for structured SuperGoals that require marker-pair completion.
+
+Preferred compact reply after the stale goal state is closed:
 
 ```text
 Goal complete. Stop.
 ```
 
-Optionally include one evidence line if it was just verified in the current turn. Do not spam artifacts or re-explain the full run.
+Fallback compact reply when the active goal state could not be closed:
+
+```text
+AUDIT_COMPLETE
+SUPERGOAL_RUN_COMPLETE
+Goal complete: yes
+```
+
+Do not spam artifacts or re-explain the full run.
 
 ## Duplicated continuation blocks in one message
 
