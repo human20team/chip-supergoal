@@ -8,7 +8,10 @@ Canonical order:
 
 1. `LAUNCH_GOAL.md` native document with `SUPERGOAL_GOAL_BODY:`.
 2. Clean Telegram launch card with button/reply affordance.
-3. Plain-text `/goal "..."` fallback outside code fences if rich launch fails.
+3. Explicit `/goal start <objective>` fallback outside code fences if rich launch fails or the receiving bot expects a start subcommand.
+4. Plain-text `/goal "..."` fallback only when that surface is known to accept it.
+
+If a user replies with only `/goal` and the gateway says “No goal for this session”, treat it as a launch UX miss: re-emit the same objective in `/goal start ...` form instead of assuming the package is running.
 
 Do not use `ROADMAP.md`, `THINKING.md`, or `PROTOCOL.md` as hidden launch surfaces.
 

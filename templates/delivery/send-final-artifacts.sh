@@ -17,7 +17,14 @@ then
   echo "final artifacts already sent for target+hash"
   exit 0
 fi
-TRANSPORT_SEND_FILE() { file="$1"; echo "SEND_FILE target=$TARGET file=$file"; }
+TRANSPORT_SEND_FILE() {
+  file="$1"
+  [[ -n "${SUPERGOAL_TRANSPORT_SEND_FILE_CMD:-}" ]] || {
+    echo "no real SUPERGOAL_TRANSPORT_SEND_FILE_CMD configured; refusing to mint a fake delivery receipt" >&2
+    exit 3
+  }
+  SUPERGOAL_SEND_TARGET="$TARGET" SUPERGOAL_SEND_FILE="$file" bash -lc "$SUPERGOAL_TRANSPORT_SEND_FILE_CMD"
+}
 MESSAGE_ID="$(TRANSPORT_SEND_FILE "$ARCHIVE")"
 python3 - <<'PY' "$RECEIPT" "$TARGET" "$ARCHIVE" "$HASH" "$MESSAGE_ID"
 import json,sys,datetime

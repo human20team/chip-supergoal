@@ -48,6 +48,21 @@ Write `THINKING.md` before `ROADMAP.md` with:
 
 If current facts shape architecture, write `RESEARCH.md` too.
 
+## Stage 3.5 — loop design gate
+
+Write `LOOP_DESIGN.md` before `ROADMAP.md`. This is the pre-launch harness design, not implementation. It must cover:
+
+- goal, context sources, and canonical truth;
+- host model / executor;
+- reviewer or judge seat and rubric;
+- verification gates and evidence tiers;
+- state checkpoints and continuation path;
+- stop conditions, retry limits, and budget;
+- boundaries, approvals, egress, and redaction;
+- failure recovery and ASCII preview.
+
+Run the loop health rubric from `references/loop-design-gate.md`. If the loop is vague, unbounded, or review-theater, mutate `LOOP_DESIGN.md`, `ROADMAP.md`, or phase specs before Stage 6.
+
 ## Stage 4 — decompose
 
 Phase count is derived from the task. No fixed cap. Each phase must leave the project in a verifiable state and have independent acceptance criteria.
@@ -58,6 +73,7 @@ Write/update:
 
 - `THINKING.md`
 - optional `RESEARCH.md`
+- `LOOP_DESIGN.md`
 - `ROADMAP.md`
 - `STATE.md`
 - `PROTOCOL.md`

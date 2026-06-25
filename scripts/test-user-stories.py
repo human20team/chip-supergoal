@@ -47,7 +47,7 @@ CHECKS = {
 'SG-002': lambda: contains('SKILL.md','**Plan-only boundary**','must not execute numbered implementation phases'),
 'SG-003': lambda: only_launch_template_has_body(),
 'SG-004': lambda: contains('SKILL.md','One standard `/goal`','LAUNCH_GOAL.md') and ref_has('references/upstream-goal-compatibility.md','/goal'),
-'SG-005': lambda: all(contains('SKILL.md', x) for x in ['THINKING.md','ROADMAP.md','STATE.md','PROTOCOL.md','LAUNCH_GOAL.md','phases/phase-N.md','scripts/repo-state.sh']),
+'SG-005': lambda: all(contains('SKILL.md', x) for x in ['THINKING.md','LOOP_DESIGN.md','ROADMAP.md','STATE.md','PROTOCOL.md','LAUNCH_GOAL.md','phases/phase-N.md','scripts/repo-state.sh']),
 'SG-006': lambda: validate_phase_script_has(['SUPERGOAL_PHASE_START','Work','Acceptance criteria','RPD required']) ,
 'SG-007': lambda: contains('SKILL.md','RPD_PLAN_REVIEW') and ref_has('references/rpd-review-gates.md','checked-holds'),
 'SG-008': lambda: contains('SKILL.md','Risky work gets Senior Gate','RPD required: yes|no') and ref_has('references/production-safety.md','approval'),
@@ -62,7 +62,7 @@ CHECKS = {
 'SG-017': lambda: contains('SKILL.md','as many phases as the task requires') and ref_has('references/phase-design.md','phase'),
 'SG-018': lambda: contains('templates/STATE.md','Current phase','Engineering check status','Live status snapshot','Delivery state'),
 'SG-019': lambda: protocol_has('SUPERGOAL_PHASE_START','SUPERGOAL_STATUS','SUPERGOAL_PHASE_VERIFY','AUDIT_START','BLOCKED_BY_APPROVAL','SUPERGOAL_RUN_COMPLETE'),
-'SG-020': lambda: protocol_has('at most one numbered phase per assistant turn','SUPERGOAL_TURN_YIELD'),
+'SG-020': lambda: protocol_has('do not stop at numbered phase boundaries','Weak blockers are forbidden','SUPERGOAL_TURN_YIELD'),
 'SG-021': lambda: protocol_has('Continuation over status-only') and ref_has('references/standing-goal-continuation-completion.md','not a request for another status summary'),
 'SG-022': lambda: ref_has('references/repeated-complete-continuations.md','stop the loop') and exists('references/repeated-completed-wrapper-guard.md'),
 'SG-023': lambda: protocol_has('BLOCKED_BY_APPROVAL','READY_FOR_DELETE_APPROVAL'),
@@ -100,6 +100,11 @@ CHECKS = {
 'SG-055': lambda: exists('README.md') and any_contains('README.md','SuperGoal','chip-supergoal'),
 }
 rows=list(csv.DictReader(CSV_PATH.open(encoding='utf-8')))
+# Some historical rows may contain extra comma-split fields if edited manually.
+# Do not let DictWriter crash on the implicit None key; the targeted assertions
+# below are the canonical regression source.
+for r in rows:
+    r.pop(None, None)
 fail=[]
 for r in rows:
     ok=CHECKS.get(r['id'], lambda: False)()

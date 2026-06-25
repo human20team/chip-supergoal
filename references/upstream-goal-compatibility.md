@@ -31,16 +31,16 @@ Forbidden:
 
 1. load `PROTOCOL.md`, `STATE.md`, `ROADMAP.md`, and `phases/phase-*.md` from the package root;
 2. continue from `STATE.md` rather than chat memory;
-3. run at most one numbered phase per assistant turn;
-4. end non-final turns with a judge-proof `SUPERGOAL_TURN_YIELD` block;
+3. continue through numbered phases in the same run; phase boundaries are checkpoints, not stop points;
+4. use `SUPERGOAL_TURN_YIELD` only for forced platform cutoff or a real blocker/gate, never as a courtesy phase stop;
 5. treat the whole goal as incomplete until both `AUDIT_COMPLETE` and `SUPERGOAL_RUN_COMPLETE` are printed in the same final response;
 6. stop with explicit `BLOCKED_BY_APPROVAL`, `FAILURE_HANDOFF`, or `AUDIT_HANDOFF` only for real blockers.
 
 ## Judge-proof turn endings
 
-Because the standard judge sees only the goal plus the last response snippet, each non-final turn must explicitly say the whole goal is not complete.
+Because the standard judge sees only the goal plus the last response snippet, a forced-yield or blocker turn must explicitly say the whole goal is not complete. Do not produce this footer after an ordinary phase when more safe work can continue.
 
-Required non-final footer:
+Forced-yield/blocker footer:
 
 ```text
 SUPERGOAL_TURN_YIELD
@@ -49,7 +49,7 @@ Next: <phase N+1|AUDIT|blocked marker>
 Completion requires: AUDIT_COMPLETE and SUPERGOAL_RUN_COMPLETE in the same final response.
 ```
 
-A normal phase `SUPERGOAL_PHASE_DONE` is not whole-goal completion. Do not write wording like “done”, “complete”, or “finished” without the footer above.
+A normal phase `SUPERGOAL_PHASE_DONE` is not whole-goal completion and not a stop condition. Continue to the next phase/audit unless a real gate, real blocker, or platform cutoff exists.
 
 Required final footer:
 

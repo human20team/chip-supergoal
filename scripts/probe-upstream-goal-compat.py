@@ -45,7 +45,8 @@ launch_body = next((line for line in launch.splitlines() if line.startswith('SUP
 for phrase in [
     'standard Hermes `/goal` continuation only',
     'Trust `STATE.md` over chat memory',
-    'Run at most one numbered phase per assistant turn',
+    'Do not stop at numbered phase boundaries',
+    'Weak blockers are forbidden',
     'Goal complete: no',
     'Completion requires: AUDIT_COMPLETE and SUPERGOAL_RUN_COMPLETE in the same final response.',
     'Goal complete: yes',

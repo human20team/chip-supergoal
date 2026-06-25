@@ -116,14 +116,15 @@ Do not accept subagent findings from stale or partial context as direct evidence
 Runs inside `/chip-supergoal` after `ROADMAP.md` and phase specs are written, before the plan is shown to the user.
 
 It must check:
-1. Are acceptance criteria falsifiable and mapped to evidence tiers?
-2. Are risky phases marked with `RPD required: yes` and an accurate `RPD focus`?
-3. Is any phase too broad to verify independently?
-4. Does the roadmap rely on an unverified assumption that should become a question, command, criterion, or research gate?
-5. Where can a partial failure cascade worst?
-6. Is the canonical source of truth identified for project state, docs, runtime/config, and generated SuperGoal artifacts?
-7. Did new layers/fallbacks/agents/shims pass the overengineering budget?
-8. Does this plan require Senior Gate, and if yes, were severity + evidence ledger recorded?
+1. Does `LOOP_DESIGN.md` define a bounded execution loop with host/reviewer/judge roles, verification gates, state, stop conditions, budget, boundaries, egress/redaction, and failure recovery?
+2. Are acceptance criteria falsifiable and mapped to evidence tiers?
+3. Are risky phases marked with `RPD required: yes` and an accurate `RPD focus`?
+4. Is any phase too broad to verify independently?
+5. Does the roadmap rely on an unverified assumption that should become a question, command, criterion, or research gate?
+6. Where can a partial failure cascade worst?
+7. Is the canonical source of truth identified for project state, docs, runtime/config, and generated SuperGoal artifacts?
+8. Did new layers/fallbacks/agents/shims pass the overengineering budget?
+9. Does this plan require Senior Gate, and if yes, were severity + evidence ledger recorded?
 
 Output marker:
 

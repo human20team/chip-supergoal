@@ -27,7 +27,9 @@ If the SuperGoal root's `.supergoal/STATE.md` already says `Status: COMPLETE`, `
 A robust GoalManager guard should:
 
 - read `.supergoal/STATE.md` before invoking the LLM/judge;
+- accept both `Status: DONE|COMPLETE` and SuperGoal planner wording such as `Status snapshot: DONE — all phases and final audit complete` when `Current phase: DONE|COMPLETE` and terminal markers are present;
+- reconcile persisted GoalManager state before `is_active()`, `next_continuation_prompt()`, `evaluate_after_turn()`, and gateway startup auto-resume so stale wrappers are marked `done` before another synthetic continuation reaches the LLM;
 - close already-complete roots as done at the control-plane layer;
 - normalize malformed audit-handoff paths;
 - preserve incomplete current roots even if a previous root mentioned in the prompt is complete;
-- include tests for both cases.
+- include tests for both cases plus a `Status snapshot` variant.

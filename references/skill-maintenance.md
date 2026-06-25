@@ -23,6 +23,18 @@ For changed skills:
 
 New incident lessons should update canonical references and tests. Root `SKILL.md` only changes for new invariants, public markers, or dispatch rules.
 
+## User-story coverage ledgers
+
+When auditing a skill feature-by-feature, keep one canonical ledger under the skill/repo (for example `docs/<skill>-user-stories.csv`) with stable IDs, source files, user story, expected behaviour, status, evidence, errors, fix notes, and retest status.
+
+Add a deterministic harness (for example `scripts/test-user-stories.py`) that reads the ledger and verifies each expected behaviour against real skill files. If the harness writes status back to CSV, force LF line endings (`lineterminator='\n'`) and re-stage the CSV after the harness runs; otherwise `git diff --check` may fail on CRLF/trailing-whitespace noise introduced by Python's default CSV writer.
+
+If the live skill path is separate from the git repo, sync the ledger and harness into the live skill as well as the repo, then run both repo and live validations before reporting completion.
+
+
+## Feature/user-story audit
+
+When auditing a skill itself, use `references/skill-feature-audit-user-stories.md`: create one canonical CSV in the repo/worktree, derive rows from actual loaded code/docs, add a deterministic test harness for row-level assertions, patch the smallest canonical source, sync live skill and repo copy if they differ, rerun both the row harness and normal skill tests, then verify `skill_view` loads the changed live file.
 
 ## Repo/private delivery gate
 

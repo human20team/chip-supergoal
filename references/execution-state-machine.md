@@ -22,9 +22,9 @@ This is the precedence table for the generated `/goal` executor.
 7. Save durable non-obvious lessons or print `MEMORY_SAVED: none`.
 8. Print `SUPERGOAL_PHASE_DONE`.
 9. Update `STATE.md` to next phase or `AUDIT`.
-10. Print `SUPERGOAL_TURN_YIELD` and stop this assistant turn.
+10. Continue immediately to the next phase in the same assistant turn until a real approval/safety gate, blocker, or final audit completion is reached.
 
-Do not start phase N+1 in the same official GoalManager turn.
+Do **not** treat phase boundaries as a stop condition for Chip. `SUPERGOAL_TURN_YIELD` is only appropriate when yielding at a real gate/blocker or after the full run completes. A per-phase courtesy stop is a weak stop and violates Chip's expected SuperGoal execution mode.
 
 ## State ledger and ignored package artifacts
 
@@ -38,7 +38,25 @@ Do not start phase N+1 in the same official GoalManager turn.
 
 ## Manual Telegram/no-stall fallback
 
-If auto-continuation is visibly not happening and the user sends a continuation command, continue from `STATE.md`. You may process more than one phase within a bounded practical budget only when that is the only way to avoid stalling. You still must emit every phase marker and update state after each phase.
+If auto-continuation is visibly not happening and the user sends a continuation command or frustration signal, continue from `STATE.md` without debating protocol. You may process more than one phase in the same turn; preserve all phase markers and update state after each phase. Stop only at a real approval/safety gate, a real blocker, or `AUDIT_COMPLETE` / `SUPERGOAL_RUN_COMPLETE`.
+
+If the user challenges a blocker, reassess it. Do not defend an over-broad gate. For Chip-owned private proof actions that are part of the requested verification (for example a private DM smoke/readback with no config change, restart, topup, plugin change, session reset, public/group send, or default switch), treat the correction as authorization to proceed with that bounded proof unless another safety rule applies.
+
+## False blockers that must not stop Chip SuperGoals
+
+These are progress checks, not approval gates, when they are already part of the requested goal and target Chip-owned/private surfaces:
+
+- private DM smoke/readback to Chip's own bot or Chip DM;
+- local/unit/integration tests, compile/lint/typecheck, repo cleanup, report/state writes;
+- read-only service/config/log/usage/ledger inspections;
+- direct low-risk model/API smoke using an already configured scoped key, with no topup and no config change;
+- fetching Telegram readback for a message the agent just sent as part of private verification.
+
+If one of these fails, classify it as a verification failure and repair/retry. Do not stop with `BLOCKED_BY_APPROVAL` unless the repair would require a real gate below.
+
+## Real gates that may stop
+
+Stop only for money/topup/trading, DNS, secrets/credential disclosure or creation, grants/access changes, destructive production mutation, public/mass posts, permanent default-model switch, plugin disable, session reset, or an unrecoverable missing credential/external outage after retrieval attempts.
 
 ## Blocked/approval precedence
 

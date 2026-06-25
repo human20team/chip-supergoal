@@ -20,17 +20,21 @@ The condition is:
 
 ```
 Execute all phases of .supergoal/ROADMAP.md sequentially.
-Read .supergoal/phases/phase-N.md for each phase; run at most
-one numbered phase per assistant turn; do the work; run mandatory
-commands; print SUPERGOAL_PHASE_VERIFY then SUPERGOAL_PHASE_DONE;
-update STATE.md; print SUPERGOAL_TURN_YIELD and stop the turn
-when more phases or AUDIT remain. Follow the failure-recovery
-protocol in .supergoal/PROTOCOL.md if any criterion fails. After
-the last numbered phase, continue from STATE.md Current phase=AUDIT
-and run the FINAL AUDIT in PROTOCOL.md (re-verify against ROADMAP.md;
-re-run aggregated mandatory commands; spot-check criteria; on gaps,
-write audit-fix-<round>.md and execute inline). Only after
-AUDIT_COMPLETE, print SUPERGOAL_RUN_COMPLETE.
+Read .supergoal/phases/phase-N.md for each phase; do the work;
+run mandatory commands; print SUPERGOAL_PHASE_VERIFY then
+SUPERGOAL_PHASE_DONE; update STATE.md; immediately continue to the
+next phase/audit. Do not stop at phase boundaries. Use
+SUPERGOAL_TURN_YIELD only for forced platform cutoff or a real
+safety/approval blocker. Weak blockers are forbidden: private
+verification/readback, local checks, read-only probes, usage/log
+queries, report/state writes, and requested repo cleanup are not
+approval blockers. Follow the failure-recovery protocol in
+.supergoal/PROTOCOL.md if any criterion fails. After the last numbered
+phase, continue from STATE.md Current phase=AUDIT and run the FINAL
+AUDIT in PROTOCOL.md (re-verify against ROADMAP.md; re-run aggregated
+mandatory commands; spot-check criteria; on gaps, write
+audit-fix-<round>.md and execute inline). Only after AUDIT_COMPLETE,
+print SUPERGOAL_RUN_COMPLETE.
 
 Done when SUPERGOAL_RUN_COMPLETE appears in the transcript with
 one SUPERGOAL_PHASE_DONE per phase, AUDIT_COMPLETE printed before

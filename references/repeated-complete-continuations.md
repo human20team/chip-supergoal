@@ -11,21 +11,23 @@ After `AUDIT_COMPLETE` / `SUPERGOAL_RUN_COMPLETE`, some clients may still send r
 Continue working toward this goal. Take the next concrete step.
 ```
 
-If `STATE.md` already says `Status: COMPLETE` and `Current phase: COMPLETE`, these are stale evaluator continuations, not instructions to re-open the run.
+If `STATE.md` already says any completed terminal state — for example `Current phase: DONE`, `Current phase: COMPLETE`, `Status: DONE`, or `Status: COMPLETE` — and the final audit contains `AUDIT_COMPLETE` / `SUPERGOAL_RUN_COMPLETE`, these are stale evaluator continuations, not instructions to re-open the run.
 
 ## Correct behavior
 
 1. Read `STATE.md` if not already loaded in the current turn.
-2. If status/current phase are complete, stop the loop.
-3. Do not run another numbered phase.
-4. Do not re-run final audit, deploy smoke, build, or live probes unless Chip explicitly asks for fresh verification.
-5. On the **first** post-complete continuation, it is acceptable to cite the final audit timestamp / counts from the saved report if already known.
-6. On **repeated identical** post-complete continuations in the same chat, do **not** keep replying with status summaries. Treat them as stale evaluator noise.
-7. If the runtime can truly suppress delivery, no-op silently. If the runtime still requires a visible final message, do **not** return an empty string — empty finals render as confusing `(empty)` messages. Use the shortest explicit marker instead: `COMPLETE — no-op.`
-8. Only answer substantively again if Chip adds a new human question, asks for fresh verification, reports a bug, or provides a new goal. Then answer that new request, not the stale continuation wrapper.
-9. Reply format if a visible answer is needed:
-   - first repeat: `COMPLETE — SuperGoal уже завершён. STATE.md: Status COMPLETE / Current phase COMPLETE. Следующей numbered phase нет.`
-   - later repeated wrapper with no new human content, if suppression is impossible: `COMPLETE — no-op.`
+2. Treat `DONE` and `COMPLETE` as equivalent terminal states when paired with final-audit evidence.
+3. If status/current phase are terminal, stop the loop.
+4. Do not run another numbered phase.
+5. Do not re-run final audit, deploy smoke, build, or live probes unless Chip explicitly asks for fresh verification.
+7. On the **first** post-complete continuation, cite the terminal state once in plain language if needed: the goal is finished, what was done, and that there is no next numbered phase.
+8. On **repeated identical** post-complete continuations in the same chat, do **not** keep replying with status summaries, file attachments, full completion blocks, or repeated `COMPLETE — no-op.` messages. Treat them as stale evaluator noise.
+9. After the first verified terminal reply in a chat, do **not** re-read `STATE.md`, re-open reports, run tests, or call tools for later identical wrappers. The already-verified terminal state is enough unless the new message contains human content beyond the wrapper.
+10. If the runtime can suppress delivery, no-op silently. If the runtime forces a visible final message, use the shortest explicit marker at most once; repeated forced visible no-ops are a control-plane bug to fix in GoalManager/gateway, not a chat behavior to normalize.
+11. Only answer substantively again if Chip adds a new human question, asks for fresh verification, reports a bug, or provides a new goal. Then answer that new request, not the stale continuation wrapper.
+12. Reply format if a visible answer is needed:
+   - first repeat: `COMPLETE — SuperGoal уже завершён. STATE.md: terminal DONE/COMPLETE. Следующей numbered phase нет.`
+   - later repeated wrapper with no new human content: prefer silence; if silence is impossible, fix the control-plane loop rather than sending repeated no-op messages.
 
 ## Why
 

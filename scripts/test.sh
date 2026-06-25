@@ -15,14 +15,17 @@ pass "shell syntax"
 for required in \
   SKILL.md \
   scripts/validate-phase.sh \
+  scripts/validate-loop-design.sh \
   scripts/repo-state.sh \
   templates/PROTOCOL.md \
   templates/ROADMAP.md \
   templates/RESEARCH.md \
+  templates/LOOP_DESIGN.md \
   templates/LAUNCH_GOAL.md \
   references/rpd-review-gates.md \
   references/core-planning-contract.md \
   references/artifact-schemas.md \
+  references/loop-design-gate.md \
   references/execution-state-machine.md \
   references/INDEX.md \
   references/dev-history-hardening.md \
@@ -38,6 +41,31 @@ for required in \
   [[ -f "$required" ]] || fail "missing required asset: $required"
 done
 pass "install layout contains required assets"
+
+bash scripts/validate-loop-design.sh templates/LOOP_DESIGN.md >/dev/null
+pass "loop-design template validates"
+
+loop_missing="$(mktemp)"
+cat >"$loop_missing" <<'EOF'
+# LOOP_DESIGN.md
+
+## Goal
+- Build something real.
+EOF
+if bash scripts/validate-loop-design.sh "$loop_missing" >/dev/null 2>&1; then
+  fail "validate-loop-design accepted missing sections"
+fi
+rm -f "$loop_missing"
+pass "validate-loop-design rejects missing sections"
+
+loop_launch="$(mktemp)"
+cp templates/LOOP_DESIGN.md "$loop_launch"
+printf '\nSUPERGOAL_GOAL_BODY: invalid\n' >> "$loop_launch"
+if bash scripts/validate-loop-design.sh "$loop_launch" >/dev/null 2>&1; then
+  fail "validate-loop-design accepted launch body"
+fi
+rm -f "$loop_launch"
+pass "validate-loop-design rejects launch body"
 
 # Private-boundary scan. This installed skill is a private Chip operator
 # overlay, so proper names in references are allowed. Raw credentials,
@@ -80,7 +108,7 @@ assert len(data['description']) <= 1024
 assert len(text.encode()) < 40000, len(text.encode())
 required = [
   'Principal+ contract', 'Generated artifacts', 'Reference dispatch',
-  'RPD / Senior Gate', 'Output Contract'
+  'RPD / Senior Gate', 'Loop Design Gate', 'Output Contract'
 ]
 missing = [x for x in required if x not in text]
 assert not missing, missing
@@ -97,6 +125,9 @@ for p in Path('.').rglob('*.md'):
         if line.startswith('SUPERGOAL_GOAL_BODY:'):
             actual.append(f'{p}:{n}')
 assert len(actual) == 1 and actual[0].startswith('templates/LAUNCH_GOAL.md:'), actual
+launch = Path('templates/LAUNCH_GOAL.md').read_text(errors='ignore')
+assert '{{SUPERGOAL_ROOT}}/LOOP_DESIGN.md' in launch, 'launch goal must tell executor to read LOOP_DESIGN.md'
+assert not any(line.startswith('SUPERGOAL_GOAL_BODY:') for line in Path('templates/LOOP_DESIGN.md').read_text(errors='ignore').splitlines()), 'LOOP_DESIGN must not be a launch surface'
 print('PASS: launch body canonical placement')
 PY
 
@@ -125,6 +156,7 @@ python3 - <<'PY'
 from pathlib import Path
 protocol = Path('templates/PROTOCOL.md').read_text(errors='ignore')
 assert '.supergoal/scripts/repo-state.sh' in protocol
+assert '.supergoal/LOOP_DESIGN.md' in protocol
 assert '.supergoal/repo-state.sh' not in protocol
 for forbidden in ('references/', 'SKILL.md'):
     assert forbidden not in protocol, f'generated protocol references missing external package path: {forbidden}'
@@ -311,12 +343,13 @@ sed \
 bash scripts/validate-phase.sh "$template_filled" >/dev/null
 pass "phase template validates after fill"
 
-grep -q 'SUPERGOAL_TURN_YIELD' templates/PROTOCOL.md || fail "protocol missing turn-yield marker"
-grep -q 'run at most one numbered phase per assistant turn' templates/PROTOCOL.md || fail "protocol missing one-phase-per-turn rule"
-if grep -q 'If N < total phases: continue with phase N+1' templates/PROTOCOL.md; then
-  fail "protocol still chains numbered phases in one turn"
+grep -q 'SUPERGOAL_TURN_YIELD' templates/PROTOCOL.md || fail "protocol missing forced-yield marker"
+grep -q 'do not stop at numbered phase boundaries' templates/PROTOCOL.md || fail "protocol missing continuous-execution rule"
+grep -q 'Weak blockers are forbidden' templates/PROTOCOL.md || fail "protocol missing weak-blocker guard"
+if grep -q 'run at most one numbered phase per assistant turn' templates/PROTOCOL.md; then
+  fail "protocol still contains obsolete one-phase-per-turn rule"
 fi
-pass "protocol yields between phases"
+pass "protocol continues through phase boundaries"
 
 python3 scripts/probe-dev-history-contracts.py
 pass "dev-history hardening contracts"

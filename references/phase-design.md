@@ -113,6 +113,17 @@ State them explicitly. Phase 4 depends on phases 1, 2 and 3 — not "the previou
 
 Almost always linear (1 → 2 → 3 → 4 → 5). True parallel phases are rare in a single-session goal chain; if you find yourself wanting them, you probably want sub-tasks within a phase, not a parallel phase.
 
+## Loop-design alignment
+
+After `LOOP_DESIGN.md` exists, phase specs should inherit its execution boundaries instead of inventing local loop rules. Use it to decide:
+
+- which phases need `RPD required: yes` because the loop names risky boundaries;
+- which mandatory commands prove each verification gate;
+- where state, receipts, backups, and failure reports must be written;
+- when a stop condition is real versus a weak courtesy-yield.
+
+Do not create a phase-local runner, `/looper`, or alternate launch path. If a phase needs extra review pressure, express it as acceptance criteria, evidence, or RPD focus in `phase-N.md`.
+
 ## The Polish & Harden phase — non-negotiable
 
 Always the last phase. Its job: catch what the earlier phases missed because they were focused on shipping behavior. Required sub-passes:

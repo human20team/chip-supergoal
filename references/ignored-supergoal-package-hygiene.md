@@ -12,6 +12,8 @@ Before creating a new package:
 
 1. Inspect for an existing `.supergoal/` directory even if git status is clean.
 2. If the user asked for a new SuperGoal and the existing package is stale/unrelated, delete or archive it before writing the new package.
+   - Prefer archiving under the active package tree, e.g. `.supergoal/archive/<name-or-timestamp>/`, not a repo-root sibling like `.supergoal_archive/`.
+   - Reason: product repo scanners and secret-scan tests commonly skip `.supergoal/` as operational evidence, but will traverse sibling archive directories and can fail on historical evidence such as Telegram chat-id-shaped values. If a sibling archive already exists and breaks scans, move it under `.supergoal/archive/` and record a `FAILURE_PROBE`; do not weaken product scans.
 3. After writing, verify the package directly, not through git status:
    - required files exist and are non-empty;
    - phase specs pass `scripts/validate-phase.sh`;

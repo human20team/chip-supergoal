@@ -7,6 +7,7 @@
 - `artifact-schemas.md` — schemas for generated files and receipts.
 - `execution-state-machine.md` — `/goal` executor state machine and recovery precedence.
 - `research-and-architecture-gates.md` — current-facts, build-vs-buy, Architect+ lite.
+- `loop-design-gate.md` — Loop Design Gate for `LOOP_DESIGN.md`: pre-launch harness design with host/reviewer/judge, verification gates, state, stop/budget/boundaries, egress/redaction, and ASCII preview.
 - `phase-design.md` and `planning-depth.md` — phase slicing and planning bar.
 - `rpd-review-gates.md` — embedded RPD/Senior Gate.
 - `telegram-launch-and-delivery.md` — launch file/card and Telegram receipts.

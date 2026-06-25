@@ -7,7 +7,8 @@ OUT="$ROOT/out"
 mkdir -p "$OUT"
 TARGET="${SUPERGOAL_DELIVERY_TARGET:?set SUPERGOAL_DELIVERY_TARGET}"
 FORCE="${SUPERGOAL_FORCE_RESEND:-0}"
-FILES=("$ROOT/THINKING.md" "$ROOT/ROADMAP.md" "$ROOT/LAUNCH_GOAL.md")
+FILES=("$ROOT/THINKING.md" "$ROOT/LOOP_DESIGN.md" "$ROOT/ROADMAP.md" "$ROOT/LAUNCH_GOAL.md")
+if [[ -s "$ROOT/RESEARCH.md" ]]; then FILES+=("$ROOT/RESEARCH.md"); fi
 for f in "${FILES[@]}"; do [[ -s "$f" ]] || { echo "missing review file: $f" >&2; exit 2; }; done
 MANIFEST="$OUT/review-md-files-delivery-receipt.json"
 HASHES=$(python3 - <<'PY' "${FILES[@]}"
@@ -24,8 +25,14 @@ then
   echo "review files already sent for target+hash"
   exit 0
 fi
-# Replace this function in generated package with the actual platform sender.
-TRANSPORT_SEND_FILE() { file="$1"; echo "SEND_FILE target=$TARGET file=$file"; }
+TRANSPORT_SEND_FILE() {
+  file="$1"
+  [[ -n "${SUPERGOAL_TRANSPORT_SEND_FILE_CMD:-}" ]] || {
+    echo "no real SUPERGOAL_TRANSPORT_SEND_FILE_CMD configured; refusing to mint a fake delivery receipt" >&2
+    exit 3
+  }
+  SUPERGOAL_SEND_TARGET="$TARGET" SUPERGOAL_SEND_FILE="$file" bash -lc "$SUPERGOAL_TRANSPORT_SEND_FILE_CMD"
+}
 MESSAGE_IDS=()
 for f in "${FILES[@]}"; do
   msg_id="$(TRANSPORT_SEND_FILE "$f")"
@@ -39,7 +46,7 @@ json.dump({
   'sent': True,
   'kind': 'review-md-files',
   'target': target,
-  'files': ['THINKING.md','ROADMAP.md','LAUNCH_GOAL.md'],
+  'files': sorted(json.loads(hashes).keys()),
   'hashes': json.loads(hashes),
   'message_ids': message_ids,
   'sent_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
