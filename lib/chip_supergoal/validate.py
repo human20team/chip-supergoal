@@ -12,6 +12,7 @@ from .model import canonical_json, load_contract
 from .normalize import semantic_errors
 from .policy import load_risk_policy
 from .render import render_launch_goal, render_loop_design, render_phase, render_roadmap, render_state, render_thinking
+from .research import render_research_markdown, research_gate, research_report, research_required, validate_research_gate
 
 REQUIRED_LOOP_SECTIONS = [
     "Goal", "Context sources", "Host model", "Reviewer / judge model", "Verification gates",
@@ -166,7 +167,9 @@ def validate_contract_file(path: str | Path, risk_policy_path: str | Path | None
         errors = semantic_errors(contract, policy)
     except Exception as exc:
         return [_diag("SGV-CONTRACT-MALFORMED", "INV-VALIDATOR-001", str(p), "/", str(exc), "Fix the contract JSON shape/version/fields.")]
-    return [_diag("SGV-CONTRACT-SEMANTIC", "INV-VALIDATOR-001", str(p), "/", e, "Fix the semantic contract error.") for e in errors]
+    diagnostics = [_diag("SGV-CONTRACT-SEMANTIC", "INV-VALIDATOR-001", str(p), "/", e, "Fix the semantic contract error.") for e in errors]
+    diagnostics.extend(validate_research_gate(contract, artifact=str(p)))
+    return diagnostics
 
 
 def _sha256_bytes(data: bytes) -> str:
@@ -181,6 +184,7 @@ def _expected_generated_files(root: Path) -> tuple[dict[str, bytes], list[Diagno
     diagnostics: list[Diagnostic] = []
     try:
         contract = load_contract(root / "CONTRACT.json")
+        diagnostics.extend(validate_research_gate(contract, artifact=str(root / "CONTRACT.json")))
     except Exception as exc:
         diagnostics.append(_diag("SGV-PACKAGE-CONTRACT-MALFORMED", "INV-VALIDATOR-001", str(root), "/CONTRACT.json", str(exc), "Regenerate the package from a valid CONTRACT.json."))
         return {}, diagnostics
@@ -192,6 +196,9 @@ def _expected_generated_files(root: Path) -> tuple[dict[str, bytes], list[Diagno
         "STATE.md": render_state(contract).encode("utf-8"),
         "LAUNCH_GOAL.md": render_launch_goal(contract).encode("utf-8"),
     }
+    if research_required(contract) or research_gate(contract):
+        expected["RESEARCH.md"] = render_research_markdown(contract).encode("utf-8")
+        expected["reports/research.json"] = (json.dumps(research_report(contract), ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
     for i in range(len(contract.phases)):
         expected[f"phases/phase-{i+1:02d}.md"] = render_phase(contract, i).encode("utf-8")
     return expected, diagnostics

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from .model import Contract
+from .research import research_report, research_required
 
 
 def render_thinking(contract: Contract) -> str:
@@ -90,7 +91,9 @@ CONTRACT.json -> COMPILE -> /goal -> PHASES -> FINAL AUDIT -> DONE
 
 
 def render_roadmap(contract: Contract) -> str:
-    lines = [f"# ROADMAP — {contract.goal.title}", "", "## Decision package", f"- Goal ID: `{contract.goal.id}`", f"- Done condition: {contract.goal.done_condition}", "", "## Context summary", f"- Profile: `{contract.profile}`", f"- Contract revision: `{contract.contract_revision}`", "", "## Assumptions", "- Markdown is generated from CONTRACT.json.", "", "## Risk top 3"]
+    research = research_report(contract)
+    research_line = f"{research['status']} via {research['provider']} — {research['summary'] or 'no summary'}" if research_required(contract) or contract.compatibility.get("research_gate") else "not required"
+    lines = [f"# ROADMAP — {contract.goal.title}", "", "## Decision package", f"- Goal ID: `{contract.goal.id}`", f"- Done condition: {contract.goal.done_condition}", f"- Research evidence: {research_line}", "", "## Context summary", f"- Profile: `{contract.profile}`", f"- Contract revision: `{contract.contract_revision}`", "", "## Assumptions", "- Markdown is generated from CONTRACT.json.", "", "## Risk top 3"]
     lines += [f"- {r.id}: `{r.tag}` — {r.mitigation or r.severity}" for r in contract.risks[:3]] or ["- none"]
     lines += ["", "## Phase map"]
     for p in contract.phases:

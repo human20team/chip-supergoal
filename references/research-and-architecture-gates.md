@@ -6,7 +6,33 @@ Use these gates before writing phase specs when external facts or architectural 
 
 Run research for greenfield systems, unfamiliar domains, current SDK/API behavior, auth/payments/security/compliance, major migrations/refactors, build-vs-buy uncertainty, or explicit requests for best practice/current practice.
 
-Use skill-first research when available. Prefer official docs/current source for SDK facts. Generic web search is fallback, not equivalent to dedicated research skills.
+Use skill-first research when available. Prefer the `perplex` skill/provider first for broad current research, then official docs/current source for SDK facts. Generic web search is fallback, not equivalent to dedicated research skills.
+
+## Executable research provider gate
+
+Contracts may set `compatibility.research_gate`:
+
+```json
+{
+  "required": true,
+  "status": "satisfied",
+  "provider": "perplex",
+  "query": "current facts needed before planning",
+  "summary": "What the research changed in the plan.",
+  "sources": [{"title": "Source title", "url": "https://example.com", "provider": "perplex"}],
+  "planning_implications": ["Phase/spec/acceptance change caused by research"]
+}
+```
+
+Strict validation blocks required research unless:
+
+- `status` is `satisfied`;
+- `provider` is supported (`perplex`, `official-docs`, `context7`, `web`, `manual`);
+- non-Perplex providers include `provider_unavailable_reason`;
+- at least one source has `title` and `url`/`locator`;
+- `summary` is substantive.
+
+Compile emits both `RESEARCH.md` and `reports/research.json`; `validate-package` treats both as generated artifacts and detects drift.
 
 ## Existing-solutions gate
 

@@ -193,6 +193,23 @@
         "T-ZIP-TRAVERSAL-REJECTED"
       ],
       "title": "Final archive cannot escape package root"
+    },
+    {
+      "canonical_reference": "references/research-and-architecture-gates.md",
+      "description": "Research-required contracts cannot compile or validate as strict packages until the research provider gate is satisfied with provider, source, summary, and planning implications evidence; Perplex is preferred unless unavailable.",
+      "id": "INV-RESEARCH-001",
+      "introduced_by": [
+        "ALPHA3-RESEARCH-GATE"
+      ],
+      "owner": "research-gate",
+      "severity_if_broken": "P1",
+      "status": "hard",
+      "tests": [
+        "T-RESEARCH-REQUIRED-BLOCKS",
+        "T-RESEARCH-COMPILE-BLOCKS",
+        "T-RESEARCH-PACKAGE-DRIFT"
+      ],
+      "title": "Perplex-first research gate"
     }
   ],
   "source": "CHIP_SUPERGOAL_ARCHITECT_PLUS_UPGRADE_PLAN-1.md sections 2, 9, 11, 12, 13, 14, 15"

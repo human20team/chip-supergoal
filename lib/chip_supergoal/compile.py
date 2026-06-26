@@ -11,6 +11,7 @@ from typing import Iterable
 
 from .model import Contract, canonical_json, load_contract
 from .render import render_launch_goal, render_loop_design, render_phase, render_roadmap, render_state, render_thinking
+from .research import render_research_markdown, research_required, research_gate, validate_research_gate, write_research_report
 
 
 REQUIRED_GENERATED = {"CONTRACT.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md"}
@@ -109,6 +110,8 @@ def _render_package(contract: Contract, out_path: Path, *, template_protocol: st
     phases_dir.mkdir()
     _write(out_path / "CONTRACT.json", canonical_json(contract))
     _write(out_path / "THINKING.md", render_thinking(contract))
+    if research_required(contract) or research_gate(contract):
+        _write(out_path / "RESEARCH.md", render_research_markdown(contract))
     _write(out_path / "LOOP_DESIGN.md", render_loop_design(contract))
     _write(out_path / "ROADMAP.md", render_roadmap(contract))
     _write(out_path / "STATE.md", render_state(contract))
@@ -117,11 +120,17 @@ def _render_package(contract: Contract, out_path: Path, *, template_protocol: st
     _write(out_path / "PROTOCOL.md", protocol_text)
     for i in range(len(contract.phases)):
         _write(phases_dir / f"phase-{i+1:02d}.md", render_phase(contract, i))
+    if research_required(contract) or research_gate(contract):
+        write_research_report(contract, out_path / "reports" / "research.json")
     manifest = build_manifest(out_path)
     _write(out_path / "MANIFEST.json", json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True) + "\n")
 
 
 def compile_contract(contract: Contract, out: str | Path, *, template_protocol: str | Path | None = None, contract_source: str | Path | None = None) -> Path:
+    research_diags = validate_research_gate(contract, artifact=str(contract_source or "CONTRACT.json"))
+    if research_diags:
+        joined = "\n".join(d.render_human() for d in research_diags)
+        raise CompileSafetyError(f"research gate is not satisfied:\n{joined}")
     raw_out = Path(out)
     out_path = raw_out.resolve(strict=False)
     parent = out_path.parent

@@ -16,7 +16,7 @@ class CompileDeterminismTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             out = Path(td) / "sg"
             self.compile_to(out)
-            for rel in ["CONTRACT.json", "MANIFEST.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md", "phases/phase-01.md"]:
+            for rel in ["CONTRACT.json", "MANIFEST.json", "THINKING.md", "RESEARCH.md", "reports/research.json", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md", "phases/phase-01.md"]:
                 self.assertTrue((out / rel).is_file(), rel)
             hits = []
             for p in out.rglob("*.md"):
@@ -30,7 +30,7 @@ class CompileDeterminismTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             out1 = Path(td) / "a"; out2 = Path(td) / "b"
             self.compile_to(out1); self.compile_to(out2)
-            comparable = ["CONTRACT.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md", "MANIFEST.json", "phases/phase-01.md"]
+            comparable = ["CONTRACT.json", "THINKING.md", "RESEARCH.md", "reports/research.json", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md", "MANIFEST.json", "phases/phase-01.md"]
             for rel in comparable:
                 self.assertTrue(filecmp.cmp(out1 / rel, out2 / rel, shallow=False), rel)
 

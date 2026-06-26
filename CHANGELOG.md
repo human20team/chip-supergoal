@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 3.0.0-alpha.3 — Research provider gate
+
+- Added executable `compatibility.research_gate` validation with Perplex-first policy for research-required plans.
+- Compile now emits generated `RESEARCH.md` and machine-readable `reports/research.json` when research is required or declared.
+- `validate-package` seals and drift-checks research artifacts alongside the generated package views.
+- Added `sgctl research-gate` and regression tests for blocked research, non-Perplex fallback justification, and research artifact drift.
+
 ## 3.0.0-alpha.2 — Coffee-review hardening ZIP
 
 - Made compiled packages byte-stable across output directories, including `LAUNCH_GOAL.md` and `MANIFEST.json`, by removing output-path-dependent launch rendering.

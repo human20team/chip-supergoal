@@ -4,7 +4,25 @@
     "source_of_truth": []
   },
   "compatibility": {
-    "goalmanager_contract": ">=documented-v2"
+    "goalmanager_contract": ">=documented-v2",
+    "research_gate": {
+      "planning_implications": [
+        "Keep security/integration RPD focus on the implementation phase.",
+        "Require unit-test evidence before completion."
+      ],
+      "provider": "perplex",
+      "query": "current safe patterns for auth-adjacent brownfield feature planning with tests",
+      "required": true,
+      "sources": [
+        {
+          "provider": "perplex",
+          "title": "Fixture Perplex research record for chip-supergoal tests",
+          "url": "https://example.com/chip-supergoal-research-fixture"
+        }
+      ],
+      "status": "satisfied",
+      "summary": "Fixture research confirms auth-adjacent brownfield work needs source-of-truth checks, explicit tests, and security-focused review before implementation phases."
+    }
   },
   "contract_revision": 1,
   "decisions": [],

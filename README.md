@@ -13,7 +13,8 @@ It is designed for work that should not be handled as a loose chat plan: product
 It creates a `.supergoal/` package containing:
 
 - `THINKING.md` — goals, assumptions, constraints, risk notes, context used.
-- `RESEARCH.md` — optional research notes when current facts or external context matter.
+- `RESEARCH.md` — generated research gate record when current facts or external context matter.
+- `reports/research.json` — machine-readable research provider/status/sources report when the gate is active.
 - `LOOP_DESIGN.md` — execution loop design: host, reviewer/judge, gates, stop conditions, recovery, boundaries.
 - `ROADMAP.md` — phase map, acceptance criteria, required commands, evidence contract.
 - `STATE.md` — initial execution state and current phase pointer.
@@ -78,6 +79,37 @@ sed -n '1,80p' /tmp/example-supergoal/LAUNCH_GOAL.md
 ## CLI: `sgctl.py`
 
 The repository includes `scripts/sgctl.py`, a small control utility used by tests and by generated packages.
+
+### Research provider gate
+
+For plans where current facts matter, set `compatibility.research_gate` in `CONTRACT.json`. The preferred provider is `perplex`; official docs, Context7, generic web search, or manual research must include `provider_unavailable_reason` when Perplex was not used.
+
+Minimal satisfied gate:
+
+```json
+{
+  "compatibility": {
+    "research_gate": {
+      "required": true,
+      "status": "satisfied",
+      "provider": "perplex",
+      "query": "current facts needed before planning",
+      "summary": "Research summary explaining what changed in the plan.",
+      "sources": [{"title": "Source", "url": "https://example.com", "provider": "perplex"}],
+      "planning_implications": ["Specific phase/spec/acceptance change caused by research"]
+    }
+  }
+}
+```
+
+Validate and inspect it:
+
+```bash
+python3 scripts/sgctl.py research-gate examples/brownfield-feature/CONTRACT.json --format json
+python3 scripts/sgctl.py validate-contract examples/brownfield-feature/CONTRACT.json --strict
+```
+
+Compile writes `RESEARCH.md` and `reports/research.json`; `validate-package` detects drift in both.
 
 Common commands:
 

@@ -13,7 +13,8 @@ English documentation: [`../README.md`](../README.md)
 Он создаёт директорию `.supergoal/` с артефактами:
 
 - `THINKING.md` — цель, ограничения, риски, допущения, использованный контекст.
-- `RESEARCH.md` — опционально, если нужны свежие факты или внешний контекст.
+- `RESEARCH.md` — generated research gate record, если нужны свежие факты или внешний контекст.
+- `reports/research.json` — machine-readable отчёт provider/status/sources, когда research gate активен.
 - `LOOP_DESIGN.md` — дизайн исполнительного цикла: host, reviewer/judge, проверки, stop conditions, recovery, boundaries.
 - `ROADMAP.md` — карта фаз, acceptance criteria, обязательные команды, требования к evidence.
 - `STATE.md` — стартовое состояние и текущая фаза.
@@ -78,6 +79,37 @@ sed -n '1,80p' /tmp/example-supergoal/LAUNCH_GOAL.md
 ## CLI: `sgctl.py`
 
 В репозитории есть `scripts/sgctl.py` — утилита для contract/package операций.
+
+### Research provider gate
+
+Если перед планом нужны свежие факты, добавьте `compatibility.research_gate` в `CONTRACT.json`. Предпочтительный provider — `perplex`; official docs, Context7, generic web search или manual research должны указывать `provider_unavailable_reason`, если Perplex не использовался.
+
+Минимальный satisfied gate:
+
+```json
+{
+  "compatibility": {
+    "research_gate": {
+      "required": true,
+      "status": "satisfied",
+      "provider": "perplex",
+      "query": "current facts needed before planning",
+      "summary": "Research summary explaining what changed in the plan.",
+      "sources": [{"title": "Source", "url": "https://example.com", "provider": "perplex"}],
+      "planning_implications": ["Specific phase/spec/acceptance change caused by research"]
+    }
+  }
+}
+```
+
+Проверить gate:
+
+```bash
+python3 scripts/sgctl.py research-gate examples/brownfield-feature/CONTRACT.json --format json
+python3 scripts/sgctl.py validate-contract examples/brownfield-feature/CONTRACT.json --strict
+```
+
+Compile пишет `RESEARCH.md` и `reports/research.json`; `validate-package` ловит drift в обоих файлах.
 
 Основные команды:
 
