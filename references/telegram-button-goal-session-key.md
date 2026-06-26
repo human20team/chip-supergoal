@@ -65,7 +65,7 @@ Add a focused test for a supergroup topic callback:
 event = adapter._build_supergoal_callback_event(query, "Run `.supergoal/demo`.")
 assert event.source.chat_type == "group"
 assert event.source.thread_id == "1858"
-assert build_session_key(event.source) == "agent:main:telegram:group:-1003971448755:1858"
+assert build_session_key(event.source) == "agent:main:telegram:group:<telegram-chat-id>:1858"
 ```
 
 Also keep the live button test that asserts the queued kickoff text is the raw goal body, not `/goal ...`, and the session reasoning override is `xhigh`.

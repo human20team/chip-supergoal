@@ -11,7 +11,7 @@ A live gateway patch is not durable until both layers are true:
 1. The live Hermes checkout commits the code and pushes it to Chip's private Hermes fork (`private/main`) when the user wants it shipped, not just locally verified.
 2. The server operations/update runbook documents the private rail so future upstream merges treat missing behavior as a private-patch regression, not harmless upstream drift.
 
-Do not tell Chip “it is safe across updates” if the fix exists only as dirty files in `/opt/hermes-agent`.
+Do not tell Chip “it is safe across updates” if the fix exists only as dirty files in `<runtime-dir>`.
 
 ## Current upstream-shaped preservation checklist
 
@@ -39,7 +39,7 @@ For SuperGoal launch-pipeline fixes, preserve this split instead of re-inlining 
 ## Commands that prove the preservation pattern
 
 ```bash
-cd /opt/hermes-agent
+cd <runtime-dir>
 python -m py_compile \
   hermes_cli/goals.py hermes_cli/goal_policies.py \
   gateway/run.py gateway/goal_launch.py gateway/platforms/telegram.py gateway/slash_commands.py

@@ -34,7 +34,7 @@ sudo systemd-run \
   --description="Delayed Hermes gateway restart + Telegram proof" \
   --on-active=20s \
   --collect \
-  /opt/hermes-agent/venv/bin/python /home/hermes/.hermes/scripts/<probe>.py
+  <runtime-dir> <home-dir>/.hermes/scripts/<probe>.py
 ```
 
 5. Final reply should state only:

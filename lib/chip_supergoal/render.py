@@ -121,12 +121,13 @@ Delivery state: not requested
 """
 
 
-def render_launch_goal(contract: Contract, out_root: str) -> str:
+def render_launch_goal(contract: Contract) -> str:
     marker = "SUPERGOAL" + "_GOAL_BODY:"
+    package_root = "this generated SuperGoal package root (the directory containing LAUNCH_GOAL.md)"
     body = (
-        f"{marker} From the project root `{contract.goal.workspace_root}`, execute the SuperGoal package at `{out_root}`. "
-        f"Read `{out_root}/PROTOCOL.md`, `{out_root}/LOOP_DESIGN.md`, `{out_root}/ROADMAP.md`, "
-        f"`{out_root}/STATE.md`, and `{out_root}/phases/phase-*.md`. Goal ID `{contract.goal.id}`. "
+        f"{marker} From the project root `{contract.goal.workspace_root}`, execute {package_root}. "
+        "Read `PROTOCOL.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `STATE.md`, and `phases/phase-*.md` from that package root. "
+        f"Goal ID `{contract.goal.id}`. "
         "Start from STATE.md current phase, continue through numbered phases, run the final audit, and finish only after "
         "AUDIT_COMPLETE and SUPERGOAL_RUN_COMPLETE appear in the same final response with Goal complete: yes. "
         "Preserve the planner/compiler boundary: do not create a production runner or nested /goal; standard Hermes /goal remains the executor."

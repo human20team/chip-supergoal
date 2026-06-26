@@ -203,7 +203,79 @@ def contract_from_dict(data: dict[str, Any], *, strict: bool = True) -> Contract
 def load_contract(path: str | Path, *, strict: bool = True) -> Contract:
     return contract_from_dict(json.loads(Path(path).read_text(encoding="utf-8")), strict=strict)
 
+def _drop_none(data: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in data.items() if v is not None}
+
+
 def to_plain(obj: Any) -> Any:
+    if isinstance(obj, Contract):
+        return {
+            "approvals": [to_plain(x) for x in obj.approvals],
+            "architecture": dict(obj.architecture.data),
+            "compatibility": dict(obj.compatibility),
+            "contract_revision": obj.contract_revision,
+            "decisions": list(obj.decisions),
+            "delivery": dict(obj.delivery.data),
+            "goal": to_plain(obj.goal),
+            "loop": dict(obj.loop.data),
+            "phases": [to_plain(x) for x in obj.phases],
+            "profile": obj.profile,
+            "protocol_version": obj.protocol_version,
+            "risks": [to_plain(x) for x in obj.risks],
+            "schema_version": obj.schema_version,
+            "source_set": [to_plain(x) for x in obj.source_set],
+        }
+    if isinstance(obj, Goal):
+        return _drop_none({
+            "created_at": obj.created_at,
+            "done_condition": obj.done_condition,
+            "id": obj.id,
+            "non_goals": list(obj.non_goals),
+            "objective": obj.objective,
+            "owner": obj.owner,
+            "request_digest": obj.request_digest,
+            "title": obj.title,
+            "workspace_root": obj.workspace_root,
+        })
+    if isinstance(obj, Source):
+        return _drop_none({
+            "authority": obj.authority,
+            "freshness": obj.freshness,
+            "id": obj.id,
+            "kind": obj.kind,
+            "locator": obj.locator,
+            "sensitivity": obj.sensitivity,
+            "sha256": obj.sha256,
+            "used_by": list(obj.used_by),
+        })
+    if isinstance(obj, Risk):
+        return {"id": obj.id, "mitigation": obj.mitigation, "severity": obj.severity, "tag": obj.tag}
+    if isinstance(obj, Approval):
+        return {"class_name": obj.class_name, "id": obj.id, "required": obj.required, "scope": obj.scope}
+    if isinstance(obj, Phase):
+        return {
+            "commands": [to_plain(x) for x in obj.commands],
+            "criteria": [to_plain(x) for x in obj.criteria],
+            "deliverables": [to_plain(x) for x in obj.deliverables],
+            "depends_on": list(obj.depends_on),
+            "id": obj.id,
+            "name": obj.name,
+            "ordinal": obj.ordinal,
+            "risk_tags": list(obj.risk_tags),
+            "rpd": to_plain(obj.rpd),
+            "task": obj.task,
+            "work_items": list(obj.work_items),
+        }
+    if isinstance(obj, Command):
+        return {"command": obj.command, "id": obj.id, "purpose": obj.purpose, "safety": obj.safety, "timeout_seconds": obj.timeout_seconds}
+    if isinstance(obj, Criterion):
+        return {"blocking": obj.blocking, "evidence_tier": obj.evidence_tier, "id": obj.id, "statement": obj.statement, "verifier": to_plain(obj.verifier)}
+    if isinstance(obj, Verifier):
+        return _drop_none({"command_id": obj.command_id, "expected_assertion": obj.expected_assertion, "expected_exit": obj.expected_exit, "type": obj.type})
+    if isinstance(obj, Deliverable):
+        return {"change_expectation": obj.change_expectation, "id": obj.id, "kind": obj.kind, "path": obj.path, "verification": obj.verification}
+    if isinstance(obj, RpdPolicy):
+        return {"focus": list(obj.focus), "required": obj.required}
     if hasattr(obj, "__dataclass_fields__"):
         return {k: to_plain(getattr(obj, k)) for k in obj.__dataclass_fields__}
     if isinstance(obj, list):

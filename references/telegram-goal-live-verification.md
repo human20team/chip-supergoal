@@ -56,10 +56,10 @@ Do not tell Chip to press the button again or paste another giant `/goal` body. 
 
 ```python
 import json, pathlib, sys
-sys.path.insert(0, '/opt/hermes-agent')
+sys.path.insert(0, '<runtime-dir>')
 from hermes_cli.goals import load_goal
 
-sessions = json.loads(pathlib.Path('/home/hermes/.hermes/sessions/sessions.json').read_text())
+sessions = json.loads(pathlib.Path('<home-dir>/.hermes/sessions/sessions.json').read_text())
 visible_key = 'agent:main:telegram:group:<chat_id>:<thread_id>'
 forum_key = 'agent:main:telegram:forum:<chat_id>:<thread_id>'
 for key in [visible_key, forum_key]:

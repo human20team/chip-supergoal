@@ -40,7 +40,7 @@ A good phase report states:
 
 ```text
 phase spec patched to resolve actual category-backed skill path
-skill_dir: /home/hermes/.hermes/skills/<category>/<skill-name>
+skill_dir: <skills-dir>/<category>/<skill-name>
 no duplicate skill created
 ```
 

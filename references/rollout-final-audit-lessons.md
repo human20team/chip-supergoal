@@ -77,7 +77,7 @@ file=<segment.ts>
 A repo may already contain production defaults such as:
 
 ```text
-/opt/clawd-workspace/vids-portal/hls
+<runtime-dir>
 ```
 
 If the path is pre-existing, production-scoped, and env-overridable, classify it explicitly as an approved production default rather than a newly introduced local workstation path. New hardcoded workstation paths, especially `C:\...` or `ffmpeg.exe`, remain blockers.

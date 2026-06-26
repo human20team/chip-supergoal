@@ -26,13 +26,46 @@ class CompileDeterminismTest(unittest.TestCase):
             self.assertEqual(len(hits), 1)
             self.assertTrue(hits[0].startswith("LAUNCH_GOAL.md:"))
 
-    def test_recompile_is_byte_stable_except_out_path_in_launch_goal(self):
+    def test_recompile_is_byte_stable_including_launch_and_manifest(self):
         with tempfile.TemporaryDirectory() as td:
             out1 = Path(td) / "a"; out2 = Path(td) / "b"
             self.compile_to(out1); self.compile_to(out2)
-            comparable = ["CONTRACT.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "phases/phase-01.md"]
+            comparable = ["CONTRACT.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md", "MANIFEST.json", "phases/phase-01.md"]
             for rel in comparable:
                 self.assertTrue(filecmp.cmp(out1 / rel, out2 / rel, shallow=False), rel)
+
+class CompileSafetyTest(unittest.TestCase):
+    def run_compile(self, out: Path):
+        return subprocess.run([sys.executable, "scripts/sgctl.py", "compile", "examples/brownfield-feature/CONTRACT.json", "--out", str(out)], cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def test_compile_refuses_unsealed_existing_directory(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "not-a-package"
+            out.mkdir()
+            (out / "important.txt").write_text("do not delete\n", encoding="utf-8")
+            result = self.run_compile(out)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertTrue((out / "important.txt").is_file())
+            self.assertIn("sealed chip-supergoal package", result.stderr + result.stdout)
+
+    def test_compile_refuses_runtime_package(self):
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "sg"
+            ok = self.run_compile(out)
+            self.assertEqual(ok.returncode, 0, ok.stdout + ok.stderr)
+            runtime = out / "runtime"
+            runtime.mkdir()
+            (runtime / "STATE.json").write_text('{"live": true}\n', encoding="utf-8")
+            result = self.run_compile(out)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertTrue((runtime / "STATE.json").is_file())
+            self.assertIn("runtime", result.stderr + result.stdout)
+
+    def test_compile_refuses_source_container(self):
+        with tempfile.TemporaryDirectory() as td:
+            result = self.run_compile(ROOT)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("source", result.stderr + result.stdout)
 
 if __name__ == "__main__":
     unittest.main()

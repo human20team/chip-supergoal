@@ -4,17 +4,17 @@ Generated: 2026-06-25T22:34:17.181187+00:00
 
 ## Scope
 - Phase 1 freezes current observable behavior and records known semantic/security escapes as expected-failure regression tests.
-- The launched goal text referenced `/home/hermes/.hermes/skills/chip-supergoal/.supergoal/architect-plus-v3-upgrade`, but the verified package was relocated to `/home/hermes/workspace/.supergoal/chip-supergoal-architect-plus-v3-upgrade` to avoid polluting the skill self-test launch-marker scan. This path drift is recorded and should be corrected by future launch generation.
+- The launched goal text referenced `<installed-skill-dir>/.supergoal/architect-plus-v3-upgrade`, but the verified package was relocated to `<workspace-dir>/.supergoal/chip-supergoal-architect-plus-v3-upgrade` to avoid polluting the skill self-test launch-marker scan. This path drift is recorded and should be corrected by future launch generation.
 
 ## Source hashes
-- `/home/hermes/.hermes/document_cache/doc_fbdd75e323cd_CHIP_SUPERGOAL_ARCHITECT_PLUS_UPGRADE_PLAN-1.md` — sha256 `b000e0882a340ea39970c5748e5e282d6add09cbaf87745ee0ff292a45b34f15` — bytes 94826
-- `/home/hermes/.hermes/skills/chip-supergoal/SKILL.md` — sha256 `ed51792c1c571c2283d0d5bd2a90fbbce44f8db1a3e01d100e553f7423f6108d` — bytes 14982
-- `/home/hermes/.hermes/skills/chip-supergoal/scripts/test.sh` — sha256 `5b933f625da9294f4669ff1806c931bf86b269b65298dd99c76b0e13532cbc9d` — bytes 18569
-- `/home/hermes/.hermes/skills/chip-supergoal/scripts/validate-phase.sh` — sha256 `06154d9ea3621addd5e4203c51d115bb088c25c1eb2de9a0625ae5589698bdb1` — bytes 3990
-- `/home/hermes/.hermes/skills/chip-supergoal/scripts/validate-loop-design.sh` — sha256 `fd5d92c11807945c04e3b3a127a1edb989c6293e6ce5963b20997637630350c6` — bytes 4712
-- `/home/hermes/.hermes/skills/chip-supergoal/templates/delivery/package-final-artifacts.sh` — sha256 `ecc86c85817d6dc70b29ec7352f403a4854056aa6928771b08f650ad90ccadc4` — bytes 1227
-- `/home/hermes/.hermes/skills/chip-supergoal/templates/delivery/send-review-md-files.sh` — sha256 `ee742012ca499ef569704d9acf0124dac612ddb49859e90f0f4e3b6820d39acf` — bytes 2188
-- `/home/hermes/.hermes/skills/chip-supergoal/templates/delivery/send-final-artifacts.sh` — sha256 `f73422c132a623d38bc1fe535320fef92dbd1e1cc286cd355b77aeca2c673667` — bytes 1598
+- `<home-dir>/.hermes/document_cache/doc_fbdd75e323cd_CHIP_SUPERGOAL_ARCHITECT_PLUS_UPGRADE_PLAN-1.md` — sha256 `b000e0882a340ea39970c5748e5e282d6add09cbaf87745ee0ff292a45b34f15` — bytes 94826
+- `<installed-skill-dir>/SKILL.md` — sha256 `ed51792c1c571c2283d0d5bd2a90fbbce44f8db1a3e01d100e553f7423f6108d` — bytes 14982
+- `<installed-skill-dir>/scripts/test.sh` — sha256 `5b933f625da9294f4669ff1806c931bf86b269b65298dd99c76b0e13532cbc9d` — bytes 18569
+- `<installed-skill-dir>/scripts/validate-phase.sh` — sha256 `06154d9ea3621addd5e4203c51d115bb088c25c1eb2de9a0625ae5589698bdb1` — bytes 3990
+- `<installed-skill-dir>/scripts/validate-loop-design.sh` — sha256 `fd5d92c11807945c04e3b3a127a1edb989c6293e6ce5963b20997637630350c6` — bytes 4712
+- `<installed-skill-dir>/templates/delivery/package-final-artifacts.sh` — sha256 `ecc86c85817d6dc70b29ec7352f403a4854056aa6928771b08f650ad90ccadc4` — bytes 1227
+- `<installed-skill-dir>/templates/delivery/send-review-md-files.sh` — sha256 `ee742012ca499ef569704d9acf0124dac612ddb49859e90f0f4e3b6820d39acf` — bytes 2188
+- `<installed-skill-dir>/templates/delivery/send-final-artifacts.sh` — sha256 `f73422c132a623d38bc1fe535320fef92dbd1e1cc286cd355b77aeca2c673667` — bytes 1598
 
 ## Current SuperGoal package inventory
 - `LAUNCH_GOAL.md` — sha256 `2e181710ae86674d3e8043a5b208dd1c1c0107a0c8478e40d44c445383b56daf` — bytes 1633

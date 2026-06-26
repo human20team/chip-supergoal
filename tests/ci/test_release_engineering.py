@@ -34,7 +34,7 @@ class ReleaseEngineeringTest(unittest.TestCase):
             for out in [a, b]:
                 result = subprocess.run([sys.executable, "scripts/sgctl.py", "compile", "examples/brownfield-feature/CONTRACT.json", "--out", str(out)], cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-            for rel in ["CONTRACT.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "phases/phase-01.md"]:
+            for rel in ["CONTRACT.json", "THINKING.md", "LOOP_DESIGN.md", "ROADMAP.md", "STATE.md", "PROTOCOL.md", "LAUNCH_GOAL.md", "MANIFEST.json", "phases/phase-01.md"]:
                 self.assertEqual((a / rel).read_bytes(), (b / rel).read_bytes(), rel)
 
     def test_no_tracked_test_dirtiness_gate_is_documented(self):

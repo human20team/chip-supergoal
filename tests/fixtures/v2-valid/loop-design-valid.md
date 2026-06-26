@@ -4,7 +4,7 @@
 Ship a falsifiable chip-supergoal change with no courtesy stop at phase boundaries.
 
 ## Context sources
-- Skill root: /home/hermes/.hermes/skills/chip-supergoal.
+- Skill root: <installed-skill-dir>.
 - Package state: .supergoal/STATE.md.
 - Canonical request: provided architecture plan.
 

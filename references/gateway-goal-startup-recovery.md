@@ -48,4 +48,4 @@ Correct split:
 
 ## Live proof bar
 
-After changing live gateway/GoalManager code, use detached restart proof, not `hermes gateway run --replace` inside the live turn. Success requires old PID != new PID, service active, imports from `/opt/hermes-agent`, and a visible/safe recovery proof or explicit blocker.
+After changing live gateway/GoalManager code, use detached restart proof, not `hermes gateway run --replace` inside the live turn. Success requires old PID != new PID, service active, imports from `<runtime-dir>`, and a visible/safe recovery proof or explicit blocker.

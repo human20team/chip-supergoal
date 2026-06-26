@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 3.0.0-alpha.2 — Coffee-review hardening ZIP
+
+- Made compiled packages byte-stable across output directories, including `LAUNCH_GOAL.md` and `MANIFEST.json`, by removing output-path-dependent launch rendering.
+- Hardened compiler output replacement: existing targets must be sealed chip-supergoal packages, different goal IDs are refused, changed contracts must advance `contract_revision`, runtime/output artifacts are not overwritten, and source-container targets are blocked.
+- Strengthened `validate-package` to verify generated Markdown views against canonical `CONTRACT.json`, enforce manifest file-set/hash/fingerprint integrity, and detect unsealed files or manual drift.
+- Added regression tests for unsafe compile targets, full compile reproducibility, generated-view drift, and manifest file-set drift.
+
 ## 3.0.0-alpha.1 — Architect+ v3 workstream
 
 - Added v3 contract model, semantic validators, deterministic compiler, state/event/evidence/audit primitives, secure delivery/archive handling, E2E simulator, reference catalog, profile split, and v2 migration adapter.

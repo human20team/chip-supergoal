@@ -56,7 +56,7 @@ Ship a falsifiable refactor while preserving the current chip-supergoal contract
 
 ## Context sources
 - User objective: refactor chip-supergoal through Shaw xhigh review.
-- Repository / filesystem: /home/hermes/workspace/chip-supergoal.
+- Repository / filesystem: <workspace-dir>/chip-supergoal.
 - Canonical source: references/artifact-boundaries.md.
 
 ## Host model

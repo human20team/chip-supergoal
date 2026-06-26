@@ -145,6 +145,7 @@ Core active references:
 - Telegram launch/delivery: `references/telegram-launch-and-delivery.md`
 - Production safety: `references/production-safety.md`
 - Skill maintenance: `references/skill-maintenance.md`
+- Methodology repo Principal+ upgrades: `references/methodology-repo-principal-plus-upgrade.md`
 
 Specialist refs and superseded incident clusters live in `references/dispatch-map.md` and `references/INDEX.md`. Incident refs are for forensics unless the dispatch map names them for the current trigger.
 
@@ -156,7 +157,7 @@ If a new incident only adds another example of an existing invariant, update the
 
 - `LAUNCH_GOAL.md` is the replyable launch file. It contains the exact upstream-compatible `SUPERGOAL_GOAL_BODY:` line.
 - `ROADMAP.md`, `THINKING.md`, and `PROTOCOL.md` must not contain their own actual launch body line.
-- When creating a SuperGoal **about the `chip-supergoal` skill itself**, do not leave the generated package under the skill root if the package contains a real `LAUNCH_GOAL.md`: the skill self-test scans the skill tree and expects only the template launch body. Put the mission package in an external workspace path (for example `/home/hermes/workspace/.supergoal/<name>`) or ensure it is outside the self-test scan before running `scripts/test.sh`.
+- When creating a SuperGoal **about the `chip-supergoal` skill itself**, do not leave the generated package under the skill root if the package contains a real `LAUNCH_GOAL.md`: the skill self-test scans the skill tree and expects only the template launch body. Put the mission package in an external workspace path (for example `<workspace-dir>/.supergoal/<name>`) or ensure it is outside the self-test scan before running `scripts/test.sh`.
 - Planning-stage review pack uses `review_pack_v2`: `THINKING.md`, `LOOP_DESIGN.md`, `ROADMAP.md`, `LAUNCH_GOAL.md`, plus `RESEARCH.md` when non-empty.
 - **Chip default: always send the planning-stage `.md` files back into the current Telegram thread for Chip to review, even if he did not explicitly ask for files.** This is a standing preference for `chip-supergoal`, not an optional delivery mode. Include native `MEDIA:` attachments or use the Telegram delivery script, then verify delivery/receipt before saying the package is ready. A text summary without the `.md` files is incomplete.
 - For Chip-facing SuperGoal packages with useful supporting context, also send `RESEARCH.md` when it exists and is not empty; keep `PROTOCOL.md`, `STATE.md`, and phase specs on disk unless Chip asks for the full bundle.
@@ -168,9 +169,9 @@ If a new incident only adds another example of an existing invariant, update the
 After editing this skill or generating a package:
 
 ```bash
-cd /home/hermes/.hermes/skills/chip-supergoal
+cd <installed-skill-dir>
 bash scripts/test.sh
-python3 /home/hermes/.hermes/skills/create-skill/scripts/skill_workflow_guard.py /home/hermes/.hermes/skills/chip-supergoal || true
+python3 <skills-dir>/create-skill/scripts/skill_workflow_guard.py <installed-skill-dir> || true
 ```
 
 Then verify live loadability with `skill_view("chip-supergoal")` and, for critical refs, `skill_view("chip-supergoal", file_path="references/rpd-review-gates.md")`.
@@ -186,7 +187,6 @@ For Chip, final planning output is compact and evidence-first:
 5. what remains blocked, if anything
 
 Do not claim execution success from this planner. Only the `/goal` executor can earn `AUDIT_COMPLETE` and `SUPERGOAL_RUN_COMPLETE`.
-
 ## Quick Test Checklist
 
 - [ ] `skill_view("chip-supergoal")` loads this concise Principal+ root.

@@ -40,5 +40,41 @@ class SgctlSemanticValidationTest(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("SGV-PACKAGE-LAUNCH-MARKER", {d["code"] for d in json.loads(result.stdout)})
 
+    def test_validate_package_catches_generated_view_drift_even_if_marker_ok(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            package = Path(td) / "sg"
+            compile_result = subprocess.run([sys.executable, "scripts/sgctl.py", "compile", "examples/brownfield-feature/CONTRACT.json", "--out", str(package)], cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.assertEqual(compile_result.returncode, 0, compile_result.stdout + compile_result.stderr)
+            (package / "ROADMAP.md").write_text((package / "ROADMAP.md").read_text() + "\nmanual drift\n", encoding="utf-8")
+            result = self.run_sgctl("validate-package", str(package), "--format", "json")
+            self.assertNotEqual(result.returncode, 0)
+            codes = {d["code"] for d in json.loads(result.stdout)}
+            self.assertIn("SGV-PACKAGE-GENERATED-DRIFT", codes)
+            self.assertIn("SGV-PACKAGE-MANIFEST-HASH", codes)
+
+    def test_validate_package_catches_manifest_file_set_drift(self):
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            package = Path(td) / "sg"
+            compile_result = subprocess.run([sys.executable, "scripts/sgctl.py", "compile", "examples/brownfield-feature/CONTRACT.json", "--out", str(package)], cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.assertEqual(compile_result.returncode, 0, compile_result.stdout + compile_result.stderr)
+            (package / "UNSEALED.md").write_text("# unsealed\n", encoding="utf-8")
+            result = self.run_sgctl("validate-package", str(package), "--format", "json")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("SGV-PACKAGE-MANIFEST-FILESET", {d["code"] for d in json.loads(result.stdout)})
+
+    def test_validate_package_catches_mode_drift(self):
+        import os
+        import tempfile
+        with tempfile.TemporaryDirectory() as td:
+            package = Path(td) / "sg"
+            compile_result = subprocess.run([sys.executable, "scripts/sgctl.py", "compile", "examples/brownfield-feature/CONTRACT.json", "--out", str(package)], cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            self.assertEqual(compile_result.returncode, 0, compile_result.stdout + compile_result.stderr)
+            os.chmod(package / "ROADMAP.md", 0o755)
+            result = self.run_sgctl("validate-package", str(package), "--format", "json")
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("SGV-PACKAGE-MANIFEST-HASH", {d["code"] for d in json.loads(result.stdout)})
+
 if __name__ == "__main__":
     unittest.main()
