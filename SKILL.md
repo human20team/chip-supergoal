@@ -145,7 +145,6 @@ Core active references:
 - Telegram launch/delivery: `references/telegram-launch-and-delivery.md`
 - Production safety: `references/production-safety.md`
 - Skill maintenance: `references/skill-maintenance.md`
-- Methodology repo Principal+ upgrades: `references/methodology-repo-principal-plus-upgrade.md`
 
 Specialist refs and superseded incident clusters live in `references/dispatch-map.md` and `references/INDEX.md`. Incident refs are for forensics unless the dispatch map names them for the current trigger.
 
